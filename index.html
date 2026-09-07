@@ -1,492 +1,437 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alixo BPO - Call Center Management Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            950: '#0f172a'
-                        }
-                    }
-                }
-            }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alixo BPO — Command Deck</title>
+<meta name="description" content="Alixo BPO Call Center Management Dashboard">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          void: '#05070c',
+          panel: '#0b1220',
+          cyan: '#00e5ff',
+          blue: '#3b82f6',
+          violet: '#8b5cf6',
+          success: '#22ffb4',
+          danger: '#ff4568',
+        },
+        fontFamily: {
+          display: ['Sora', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          data: ['"IBM Plex Mono"', 'monospace'],
         }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col md:flex-row antialiased">
+<body class="font-body text-sm">
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+<div id="toast-stack" aria-live="polite" aria-atomic="true"></div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-    <!-- Mobile Sidebar Backdrop -->
-    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+<div class="flex min-h-screen">
 
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-slate-900 border-r border-slate-800 flex flex-col z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-xl text-white font-bold"><i class="fa-solid fa-headset"></i></div>
-                <div>
-                    <h1 class="font-bold text-base tracking-wide">Alixo BPO</h1>
-                    <p class="text-xs text-slate-400">Call Center Suite</p>
-                </div>
-            </div>
-            <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto text-sm">
-            <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition bg-blue-600 text-white">
-                <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
-            </button>
-            <button onclick="switchTab('submit')" data-target="submit" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
-                <i class="fa-solid fa-file-circle-plus w-5"></i> Lead Submission
-            </button>
-            <button onclick="switchTab('campaigns')" data-target="campaigns" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
-                <i class="fa-solid fa-flag w-5"></i> Active Campaigns
-            </button>
-            <button onclick="switchTab('progress')" data-target="progress" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
-                <i class="fa-solid fa-chart-line w-5"></i> Progress & Live
-            </button>
-            <button onclick="switchTab('tools')" data-target="tools" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
-                <i class="fa-solid fa-toolbox w-5"></i> Tools & Dialer
-            </button>
-            <button onclick="switchTab('settings')" data-target="settings" class="nav-link w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition text-slate-400 hover:bg-slate-800 hover:text-slate-200">
-                <i class="fa-solid fa-gear w-5"></i> Settings
-            </button>
-        </nav>
-
-        <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
-            Alixo BPO Ops v2.4 &copy; 2026
-        </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0">
-        <!-- Top Header -->
-        <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between sticky top-0 z-20">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-bars"></i></button>
-                <h2 id="page-title" class="font-bold text-lg text-slate-100">Dashboard Overview</h2>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="fetchAppData()" id="refresh-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-medium transition flex items-center gap-2 border border-slate-700">
-                    <i id="refresh-icon" class="fa-solid fa-rotate"></i> Refresh Data
-                </button>
-                <button onclick="toggleTheme()" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl flex items-center justify-center text-slate-300 transition" title="Toggle Theme">
-                    <i id="theme-icon" class="fa-solid fa-sun"></i>
-                </button>
-                <button onclick="switchTab('submit')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-lg shadow-blue-600/20 flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> New Lead
-                </button>
-            </div>
-        </header>
-
-        <!-- Dynamic Views container -->
-        <main class="flex-1 p-6 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
-
-            <!-- 1. DASHBOARD VIEW -->
-            <section id="view-dashboard" class="view-section space-y-6">
-                <!-- Metrics Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-                        <span class="text-xs text-slate-400 font-medium">Today's Leads</span>
-                        <div class="my-3 flex items-baseline justify-between">
-                            <h3 id="dash-today-leads" class="text-3xl font-bold tracking-tight">0</h3>
-                            <span class="text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full font-medium">Live sync</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-                        <span class="text-xs text-slate-400 font-medium">This Month's Leads</span>
-                        <div class="my-3 flex items-baseline justify-between">
-                            <h3 id="dash-month-leads" class="text-3xl font-bold tracking-tight">0</h3>
-                            <span class="text-xs text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full font-medium">Accumulated</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-                        <span class="text-xs text-slate-400 font-medium">Active Campaigns</span>
-                        <div class="my-3 flex items-baseline justify-between">
-                            <h3 id="dash-active-camps" class="text-3xl font-bold tracking-tight">8</h3>
-                            <span class="text-xs text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-medium">Static Config</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between">
-                        <span class="text-xs text-slate-400 font-medium">Top Campaign Today</span>
-                        <div class="my-3">
-                            <h3 id="dash-top-camp" class="text-lg font-bold tracking-tight truncate">N/A</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Secondary Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Today's Leads Table (Span 2) -->
-                    <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col">
-                        <div class="flex justify-between items-center mb-4">
-                            <div>
-                                <h3 class="font-bold text-sm">Today's Leads Summary</h3>
-                                <p class="text-xs text-slate-400">Real-time submissions recorded in Sheets</p>
-                            </div>
-                            <button onclick="switchTab('progress')" class="text-xs text-blue-400 hover:text-blue-300 font-medium">View Full Feed &rarr;</button>
-                        </div>
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left text-xs">
-                                <thead class="border-b border-slate-800 text-slate-400">
-                                    <tr>
-                                        <th class="p-3">Time</th>
-                                        <th class="p-3">Agent</th>
-                                        <th class="p-3">Customer</th>
-                                        <th class="p-3">Campaign</th>
-                                        <th class="p-3">Transfer By</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="dash-today-table" class="divide-y divide-slate-800/50">
-                                    <tr><td colspan="5" class="p-6 text-center text-slate-500">Loading lead records...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Top 3 Agents Card (Span 1) -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-sm">Top 3 Agents This Month</h3>
-                                <i class="fa-solid fa-trophy text-amber-400"></i>
-                            </div>
-                            <div id="top-agents-list" class="space-y-4 py-2">
-                                <p class="text-xs text-slate-500 text-center py-6">Calculating rankings...</p>
-                            </div>
-                        </div>
-                        <div class="pt-4 border-t border-slate-800 flex flex-col gap-2">
-                            <button onclick="switchTab('submit')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-2.5 rounded-xl transition">Quick Lead Submission</button>
-                            <button onclick="switchTab('campaigns')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-2.5 rounded-xl transition border border-slate-700">View Active Campaigns</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 2. LEAD SUBMISSION VIEW -->
-            <section id="view-submit" class="view-section hidden max-w-3xl mx-auto">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-                    <div class="mb-6 border-b border-slate-800 pb-4">
-                        <h3 class="text-lg font-bold">New Lead Submission Form</h3>
-                        <p class="text-xs text-slate-400">Verify customer details and check duplicates before transferring.</p>
-                    </div>
-
-                    <form id="lead-form" onsubmit="submitLead(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Agent Name *</label>
-                                <input type="text" id="agentName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="e.g. Ali Khan">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Campaign *</label>
-                                <select id="campaign" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500">
-                                    <option value="">Select Static Campaign</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Customer First Name *</label>
-                                <input type="text" id="customerFirstName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="First Name">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Customer Last Name *</label>
-                                <input type="text" id="customerLastName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Last Name">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Customer Phone Number * (Real-time Duplicate Check)</label>
-                                <input type="tel" id="customerPhone" required oninput="checkDuplicate(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="5551234567">
-                                <div id="duplicate-status" class="mt-1.5 text-xs font-medium"></div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Show Number *</label>
-                                <input type="tel" id="showNumber" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Caller ID shown">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Street Address *</label>
-                            <input type="text" id="streetAddress" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="123 Main St">
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">City *</label>
-                                <input type="text" id="city" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="City">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">State *</label>
-                                <input type="text" id="state" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="State (e.g. TX)">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Zipcode *</label>
-                                <input type="text" id="zipcode" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Zip">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Transfer By *</label>
-                                <input type="text" id="transferBy" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Transfer method / Agent ID">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">Duration *</label>
-                                <input type="text" id="duration" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-blue-500" placeholder="e.g. 03:45">
-                            </div>
-                        </div>
-
-                        <div class="pt-4 flex justify-end gap-3">
-                            <button type="button" onclick="switchTab('dashboard')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-5 py-2.5 rounded-xl text-xs font-semibold transition">Cancel</button>
-                            <button type="submit" id="submit-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-xl text-xs font-semibold transition shadow-lg shadow-blue-600/20">Submit Lead</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- 3. ACTIVE CAMPAIGNS VIEW -->
-            <section id="view-campaigns" class="view-section hidden space-y-6">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-lg">Active Campaigns Directory</h3>
-                        <p class="text-xs text-slate-400">Static configuration rules &amp; live dialer parameters</p>
-                    </div>
-                    <span id="active-camp-count" class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full font-semibold">8 Active</span>
-                </div>
-                <div id="campaigns-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Populated dynamically -->
-                </div>
-            </section>
-
-            <!-- 4. PROGRESS & LIVE FEED VIEW -->
-            <section id="view-progress" class="view-section hidden space-y-6">
-                <!-- Filter Bar -->
-                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="setDateFilter('today')" class="date-btn bg-blue-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition">Today</button>
-                        <button onclick="setDateFilter('yesterday')" class="date-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold transition">Yesterday</button>
-                        <button onclick="setDateFilter('week')" class="date-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold transition">This Week</button>
-                        <button onclick="setDateFilter('month')" class="date-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold transition">This Month</button>
-                        <button onclick="setDateFilter('lastmonth')" class="date-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold transition">Last Month</button>
-                        <button onclick="toggleCustomRange()" class="date-btn bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-semibold transition">Custom Range</button>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <select id="agent-search-select" onchange="filterLeadsByAgent(this.value)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-blue-500">
-                            <option value="">All Agents</option>
-                        </select>
-                        <button onclick="fetchAppData()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-medium border border-slate-700"><i class="fa-solid fa-rotate"></i></button>
-                    </div>
-                </div>
-
-                <!-- Custom Range Box -->
-                <div id="custom-range-box" class="hidden bg-slate-900 border border-slate-800 p-4 rounded-2xl flex items-center gap-4">
-                    <div>
-                        <label class="block text-[10px] text-slate-400 mb-1">Start Date</label>
-                        <input type="date" id="custom-start" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] text-slate-400 mb-1">End Date</label>
-                        <input type="date" id="custom-end" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
-                    </div>
-                    <div class="self-end">
-                        <button onclick="applyCustomRange()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-xl text-xs font-semibold">Apply</button>
-                    </div>
-                </div>
-
-                <!-- Progress Statistics -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-                        <span class="text-[11px] text-slate-400 font-medium">Total Leads</span>
-                        <h4 id="stat-total" class="text-2xl font-bold mt-1">0</h4>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-                        <span class="text-[11px] text-slate-400 font-medium">Today's Leads</span>
-                        <h4 id="stat-today" class="text-2xl font-bold mt-1">0</h4>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-                        <span class="text-[11px] text-slate-400 font-medium">This Week</span>
-                        <h4 id="stat-week" class="text-2xl font-bold mt-1">0</h4>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-                        <span class="text-[11px] text-slate-400 font-medium">This Month</span>
-                        <h4 id="stat-month" class="text-2xl font-bold mt-1">0</h4>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl col-span-2 sm:col-span-1">
-                        <span class="text-[11px] text-slate-400 font-medium">Selected Range</span>
-                        <h4 id="stat-range" class="text-2xl font-bold mt-1">0</h4>
-                    </div>
-                </div>
-
-                <!-- Live Feed Table -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center gap-3">
-                            <h3 class="font-bold text-sm">Live Feed Submissions</h3>
-                            <span class="flex items-center gap-1.5 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Auto-Sync Active
-                            </span>
-                        </div>
-                        <span id="feed-updated" class="text-xs text-slate-500">Updating...</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="border-b border-slate-800 text-slate-400">
-                                <tr>
-                                    <th class="p-3">Timestamp</th>
-                                    <th class="p-3">Agent Name</th>
-                                    <th class="p-3">Customer Name</th>
-                                    <th class="p-3">Phone Number</th>
-                                    <th class="p-3">Campaign</th>
-                                    <th class="p-3">State</th>
-                                    <th class="p-3">Transfer By</th>
-                                    <th class="p-3">Duration</th>
-                                </tr>
-                            </thead>
-                            <tbody id="live-feed-table" class="divide-y divide-slate-800/50">
-                                <tr><td colspan="8" class="p-6 text-center text-slate-500">Waiting for submissions...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 5. TOOLS & DIALER VIEW -->
-            <section id="view-tools" class="view-section hidden space-y-6">
-                <div>
-                    <h3 class="font-bold text-lg">Operational Tools &amp; Resources</h3>
-                    <p class="text-xs text-slate-400">Quick access links and dialer credentials</p>
-                </div>
-
-                <!-- Clickable Cards Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <a href="https://docs.google.com/forms/d/1aI1zJBzCfVVHZsoN7J9y3IgXlD1jlm3M93QVZNzskGo/edit" target="_blank" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 p-5 rounded-2xl transition group flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-blue-400 font-medium">Internal Form</span>
-                            <h4 class="font-bold text-sm mt-0.5 group-hover:text-blue-400 transition">Inhouse Form</h4>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400"></i>
-                    </a>
-                    <a href="https://tcpa.tools/" target="_blank" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 p-5 rounded-2xl transition group flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-blue-400 font-medium">Compliance</span>
-                            <h4 class="font-bold text-sm mt-0.5 group-hover:text-blue-400 transition">TCPA Tools</h4>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400"></i>
-                    </a>
-                    <a href="https://forms.gle/dwKd8qccigrdx7BN7" target="_blank" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 p-5 rounded-2xl transition group flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-blue-400 font-medium">Medical</span>
-                            <h4 class="font-bold text-sm mt-0.5 group-hover:text-blue-400 transition">Pharmacy Form</h4>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400"></i>
-                    </a>
-                    <a href="https://uspeoplesearch.net/" target="_blank" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 p-5 rounded-2xl transition group flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-blue-400 font-medium">Directory</span>
-                            <h4 class="font-bold text-sm mt-0.5 group-hover:text-blue-400 transition">Searching Website</h4>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400"></i>
-                    </a>
-                    <a href="https://docs.google.com/forms/u/0/d/e/1FAIpQLSd8A350LojvYD9qY78p1uydYB15lDscFtqiMABMLfsAxizG_Q/formResponse" target="_blank" class="bg-slate-900 hover:bg-slate-850 border border-slate-800 p-5 rounded-2xl transition group flex items-center justify-between sm:col-span-2 lg:col-span-1">
-                        <div>
-                            <span class="text-xs text-blue-400 font-medium">Inbound</span>
-                            <h4 class="font-bold text-sm mt-0.5 group-hover:text-blue-400 transition">Inbound Transfer Form</h4>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-500 group-hover:text-blue-400"></i>
-                    </a>
-                </div>
-
-                <!-- Dialer Info Card -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <span class="text-xs bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded font-semibold">CallHub Dialer Infrastructure</span>
-                            <h4 class="font-bold text-base mt-2">Dialer Access &amp; Agent Credentials</h4>
-                        </div>
-                        <button onclick="copyDialerCredentials()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-medium border border-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-copy"></i> Copy Login Details
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 space-y-2">
-                            <p class="text-slate-400"><strong>Dialer Domain:</strong> <a href="https://silverbpo.callhub.ai/" target="_blank" class="text-blue-400 hover:underline">https://silverbpo.callhub.ai/</a></p>
-                            <p class="text-slate-400"><strong>IP Whitelisted Link:</strong> <a href="https://silverbpo.callhub.ai:444" target="_blank" class="text-blue-400 hover:underline">https://silverbpo.callhub.ai:444</a></p>
-                        </div>
-                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 space-y-2">
-                            <p class="text-slate-400"><strong>Username / Extension:</strong> Silver1 through Silver20</p>
-                            <p class="text-slate-400"><strong>Password:</strong> Same as Username (e.g., Silver1 / Silver1)</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-wrap gap-3 pt-2">
-                        <a href="https://silverbpo.callhub.ai/" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition flex items-center gap-2">
-                            <i class="fa-solid fa-phone"></i> Open Dialer
-                        </a>
-                        <a href="https://silverbpo.callhub.ai:444" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-semibold transition border border-slate-700 flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved"></i> Open IP Whitelisted Link
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. SETTINGS VIEW -->
-            <section id="view-settings" class="view-section hidden max-w-xl mx-auto space-y-6">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-5">
-                    <div>
-                        <h3 class="font-bold text-lg">System Configuration</h3>
-                        <p class="text-xs text-slate-400">Backend bindings &amp; UI display preferences</p>
-                    </div>
-
-                    <div class="space-y-4 text-xs">
-                        <div>
-                            <label class="block font-medium text-slate-300 mb-1">Google Apps Script Web App URL</label>
-                            <input type="text" id="setting-url" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-blue-500 font-mono" placeholder="https://script.google.com/macros/s/.../exec">
-                        </div>
-                        <div>
-                            <label class="block font-medium text-slate-300 mb-1">Google Spreadsheet ID</label>
-                            <input type="text" id="setting-sheetid" value="1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-400 cursor-not-allowed">
-                        </div>
-                        <div>
-                            <label class="block font-medium text-slate-300 mb-1">Auto-Refresh Interval</label>
-                            <select id="setting-interval" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-blue-500">
-                                <option value="15000">Every 15 Seconds</option>
-                                <option value="20000" selected>Every 20 Seconds</option>
-                                <option value="30000">Every 30 Seconds</option>
-                            </select>
-                        </div>
-                        <div class="pt-2">
-                            <button onclick="saveSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-xl transition">Save Configuration</button>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-800 pt-4 text-[11px] text-slate-500 space-y-1">
-                        <p><strong>Note on Campaigns:</strong> Campaigns are strictly static as per Alixo BPO architecture and cannot be modified via CRUD in Google Sheets.</p>
-                    </div>
-                </div>
-            </section>
-
-        </main>
+  <!-- ============= SIDEBAR ============= -->
+  <aside id="sidebar" class="w-[260px] flex-shrink-0 flex flex-col">
+    <div class="flex items-center gap-3 px-5 py-5 border-b divider">
+      <div class="relative w-9 h-9 rounded-lg glow-cyan flex items-center justify-center font-display font-800 text-cyan bg-black/30 border border-cyan/30">
+        <span class="text-glow" style="color:var(--cyan)">A</span>
+      </div>
+      <div>
+        <p class="font-display font-bold text-[15px] leading-tight" style="color:var(--text-1)">ALIXO <span style="color:var(--cyan)">BPO</span></p>
+        <p class="kicker">COMMAND DECK</p>
+      </div>
     </div>
 
-    <!-- Script inclusion -->
-    <script src="script.js"></script>
+    <nav class="flex-1 px-3 py-4 space-y-1" id="nav-list" aria-label="Primary navigation">
+      <div class="nav-item active" data-page="dashboard" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" data-page="lead-submission" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        Lead Submission
+      </div>
+      <div class="nav-item" data-page="active-campaigns" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
+        Active Campaigns
+      </div>
+      <div class="nav-item" data-page="progress" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        Progress
+      </div>
+      <div class="nav-item" data-page="tools" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 1 1-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 1 1 5.4-5.4z"/></svg>
+        Tools
+      </div>
+      <div class="nav-item" data-page="settings" role="button" tabindex="0">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </div>
+    </nav>
+
+    <div class="p-3 border-t divider">
+      <div class="glass hud-frame rounded-lg p-3 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue to-violet flex items-center justify-center text-xs font-bold text-white" id="profile-initials">SA</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-[13px] font-semibold truncate" style="color:var(--text-1)" id="profile-name">Supervisor</p>
+          <p class="text-[11px] truncate" style="color:var(--text-3)">Alixo BPO Ops</p>
+        </div>
+        <button class="btn btn-ghost !p-2" title="Log out" onclick="handleLogout()" aria-label="Log out">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============= MAIN ============= -->
+  <div class="flex-1 min-w-0 flex flex-col">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-30 glass !rounded-none !border-x-0 !border-t-0 px-4 lg:px-6 py-3 flex items-center gap-3">
+      <button class="btn btn-ghost !p-2 lg:hidden" onclick="openSidebar()" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="min-w-0">
+        <h1 class="font-display font-bold text-lg leading-tight" id="page-title" style="color:var(--text-1)">Dashboard</h1>
+        <p class="text-[11px] flex items-center gap-1.5" style="color:var(--text-3)"><span class="dot-live"></span> Live · <span id="header-clock" class="font-data"></span> PKT</p>
+      </div>
+      <div class="ml-auto flex items-center gap-2">
+        <button class="btn btn-ghost !p-2" id="theme-toggle" title="Toggle theme" aria-label="Toggle dark or light mode">
+          <svg id="theme-icon-dark" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>
+          <svg id="theme-icon-light" class="hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="btn btn-primary hidden sm:inline-flex" onclick="goToPage('lead-submission')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+          New Lead
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 p-4 lg:p-6 max-w-[1500px] w-full mx-auto">
+
+      <!-- ============================================================ DASHBOARD ============================================================ -->
+      <section class="page active" id="page-dashboard">
+        <div class="relative overflow-hidden rounded-2xl glass hud-frame p-6 mb-6">
+          <canvas id="neural-canvas"></canvas>
+          <div class="relative z-10">
+            <p class="kicker mb-1">SYSTEM OVERVIEW</p>
+            <h2 class="font-display font-bold text-2xl mb-1" style="color:var(--text-1)">Command Deck — Real-Time Operations</h2>
+            <p class="text-[13px] max-w-lg" style="color:var(--text-2)">Live telemetry across every campaign, agent, and lead moving through the pipeline right now.</p>
+          </div>
+        </div>
+
+        <!-- Summary cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6" id="summary-cards">
+          <!-- injected -->
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+          <div class="xl:col-span-2 glass hud-frame rounded-xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display font-semibold text-sm" style="color:var(--text-1)">Recent Lead Submissions</h3>
+              <button class="text-[11px] font-semibold" style="color:var(--cyan)" onclick="goToPage('progress')">View all →</button>
+            </div>
+            <div class="overflow-x-auto -mx-1">
+              <table class="data-table min-w-[640px]">
+                <thead><tr><th>Time</th><th>Agent</th><th>Customer</th><th>Campaign</th><th>State</th></tr></thead>
+                <tbody id="recent-leads-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="glass hud-frame rounded-xl p-4">
+            <h3 class="font-display font-semibold text-sm mb-3" style="color:var(--text-1)">Top Agents</h3>
+            <div id="top-agents-list" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4">
+          <div class="glass hud-frame rounded-xl p-4">
+            <h3 class="font-display font-semibold text-sm mb-3" style="color:var(--text-1)">Today's Campaign Performance</h3>
+            <div id="campaign-performance-list" class="space-y-3"></div>
+          </div>
+          <div class="glass hud-frame rounded-xl p-4 flex flex-col">
+            <h3 class="font-display font-semibold text-sm mb-3" style="color:var(--text-1)">Quick Access</h3>
+            <div class="grid grid-cols-2 gap-3 flex-1">
+              <button class="btn btn-primary h-full flex-col !gap-2" onclick="goToPage('lead-submission')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Submit a Lead
+              </button>
+              <button class="btn btn-ghost h-full flex-col !gap-2" onclick="goToPage('active-campaigns')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+                Active Campaigns
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ LEAD SUBMISSION ============================================================ -->
+      <section class="page" id="page-lead-submission">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <form class="lg:col-span-2 glass hud-frame rounded-xl p-5" id="lead-form" novalidate>
+            <h3 class="font-display font-semibold text-base mb-4" style="color:var(--text-1)">New Lead Submission</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="f-agent">Agent Name *</label>
+                <input class="field-input" id="f-agent" name="agentName" required autocomplete="name" placeholder="e.g. Ayesha K.">
+              </div>
+              <div>
+                <label class="field-label" for="f-fname">Customer First Name *</label>
+                <input class="field-input" id="f-fname" name="firstName" required placeholder="First name">
+              </div>
+              <div>
+                <label class="field-label" for="f-lname">Customer Last Name *</label>
+                <input class="field-input" id="f-lname" name="lastName" required placeholder="Last name">
+              </div>
+              <div>
+                <label class="field-label" for="f-phone">Customer Phone Number *</label>
+                <input class="field-input" id="f-phone" name="phone" required inputmode="tel" placeholder="(555) 555-5555" autocomplete="off">
+                <div id="dup-status" class="mt-2 text-[12px]" aria-live="polite"></div>
+              </div>
+              <div>
+                <label class="field-label" for="f-shownumber">Show Number</label>
+                <input class="field-input" id="f-shownumber" name="showNumber" inputmode="tel" placeholder="Number shown on caller ID">
+              </div>
+              <div>
+                <label class="field-label" for="f-address">Street Address</label>
+                <input class="field-input" id="f-address" name="address" placeholder="Street address">
+              </div>
+              <div>
+                <label class="field-label" for="f-city">City</label>
+                <input class="field-input" id="f-city" name="city" placeholder="City">
+              </div>
+              <div>
+                <label class="field-label" for="f-state">State</label>
+                <input class="field-input" id="f-state" name="state" maxlength="2" placeholder="e.g. TX" style="text-transform:uppercase">
+              </div>
+              <div>
+                <label class="field-label" for="f-zip">Zipcode</label>
+                <input class="field-input" id="f-zip" name="zip" inputmode="numeric" placeholder="Zipcode">
+              </div>
+              <div>
+                <label class="field-label" for="f-transferby">Transfer By</label>
+                <input class="field-input" id="f-transferby" name="transferBy" placeholder="Who transferred the call">
+              </div>
+              <div>
+                <label class="field-label" for="f-duration">Duration</label>
+                <input class="field-input" id="f-duration" name="duration" placeholder="e.g. 4m 12s">
+              </div>
+              <div>
+                <label class="field-label" for="f-campaign">Campaign *</label>
+                <select class="field-input" id="f-campaign" name="campaign" required>
+                  <option value="" disabled selected>Select a campaign</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 mt-6">
+              <button type="submit" class="btn btn-primary" id="submit-lead-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg>
+                Submit Lead
+              </button>
+              <button type="button" class="btn btn-ghost" onclick="resetLeadForm()">Clear Form</button>
+              <span id="submit-status" class="text-[12px]" style="color:var(--text-3)"></span>
+            </div>
+          </form>
+
+          <div class="glass hud-frame rounded-xl p-5">
+            <h3 class="font-display font-semibold text-sm mb-1" style="color:var(--text-1)">Duplicate Checker</h3>
+            <p class="text-[12px] mb-4" style="color:var(--text-3)">Runs automatically as the phone number is typed. Compares against the Customer Phone Number column only.</p>
+            <div id="dup-panel" class="rounded-lg p-4 border" style="border-color:var(--panel-border); background:var(--hairline)">
+              <p class="text-[12px]" style="color:var(--text-3)">Start typing a phone number to check for duplicates.</p>
+            </div>
+            <div class="mt-4 pt-4 border-t divider">
+              <p class="kicker mb-2">Reminder</p>
+              <ul class="text-[12px] space-y-1.5" style="color:var(--text-2)">
+                <li>· Timestamp is captured automatically (Asia/Karachi)</li>
+                <li>· Submit is disabled while a duplicate is active</li>
+                <li>· Campaigns are fixed and cannot be edited here</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ ACTIVE CAMPAIGNS ============================================================ -->
+      <section class="page" id="page-active-campaigns">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-[13px]" style="color:var(--text-2)">All campaigns currently accepting transfers.</p>
+          <span class="badge badge-neutral" id="campaign-count-badge">0 active</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="campaigns-grid"></div>
+      </section>
+
+      <!-- ============================================================ PROGRESS ============================================================ -->
+      <section class="page" id="page-progress">
+        <div class="glass hud-frame rounded-xl p-4 mb-4">
+          <div class="flex flex-wrap items-end gap-3">
+            <div class="flex flex-wrap gap-2" id="date-filter-buttons">
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn active" data-range="today">Today</button>
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn" data-range="yesterday">Yesterday</button>
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn" data-range="week">This Week</button>
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn" data-range="month">This Month</button>
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn" data-range="lastmonth">Last Month</button>
+              <button class="btn btn-ghost !py-1.5 !px-3 date-filter-btn" data-range="custom">Custom Range</button>
+            </div>
+            <div id="custom-range-fields" class="hidden flex flex-wrap items-end gap-2">
+              <div>
+                <label class="field-label" for="range-start">Start Date</label>
+                <input type="date" class="field-input !py-1.5" id="range-start">
+              </div>
+              <div>
+                <label class="field-label" for="range-end">End Date</label>
+                <input type="date" class="field-input !py-1.5" id="range-end">
+              </div>
+              <button class="btn btn-primary !py-1.5" id="apply-range-btn">Apply</button>
+            </div>
+            <div class="ml-auto flex flex-wrap items-end gap-2">
+              <div>
+                <label class="field-label" for="agent-filter">Agent</label>
+                <select class="field-input !py-1.5" id="agent-filter" style="min-width:160px">
+                  <option value="all">All Agents</option>
+                </select>
+              </div>
+              <button class="btn btn-ghost !py-1.5" id="manual-refresh-btn" title="Refresh now">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0114.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0020.5 15"/></svg>
+                Refresh
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4" id="progress-stats"></div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mb-4">
+          <div class="xl:col-span-2 glass hud-frame rounded-xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-display font-semibold text-sm flex items-center gap-2" style="color:var(--text-1)"><span class="dot-live"></span> Live Feed</h3>
+              <span class="text-[11px]" style="color:var(--text-3)">Auto-refreshes every 20s</span>
+            </div>
+            <div class="overflow-x-auto max-h-[380px] overflow-y-auto -mx-1">
+              <table class="data-table min-w-[820px]">
+                <thead><tr><th>Timestamp</th><th>Agent</th><th>Customer</th><th>Phone</th><th>Campaign</th><th>State</th><th>Transfer By</th><th>Duration</th></tr></thead>
+                <tbody id="live-feed-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="glass hud-frame rounded-xl p-4">
+            <h3 class="font-display font-semibold text-sm mb-3" style="color:var(--text-1)">Top 3 Agents This Month</h3>
+            <div id="top3-agents" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <div class="glass hud-frame rounded-xl p-4">
+          <h3 class="font-display font-semibold text-sm mb-3" style="color:var(--text-1)">Today's Leads</h3>
+          <div class="overflow-x-auto max-h-[380px] overflow-y-auto -mx-1">
+            <table class="data-table min-w-[820px]">
+              <thead><tr><th>Time</th><th>Agent</th><th>Customer</th><th>Phone</th><th>Campaign</th><th>State</th><th>Transfer By</th><th>Duration</th></tr></thead>
+              <tbody id="today-leads-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ TOOLS ============================================================ -->
+      <section class="page" id="page-tools">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4" id="tools-grid"></div>
+
+        <div class="glass hud-frame rounded-xl p-5">
+          <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <div>
+              <h3 class="font-display font-semibold text-base" style="color:var(--text-1)">Dialer Access</h3>
+              <p class="text-[12px]" style="color:var(--text-3)">CallHub credentials for the Silver login pool.</p>
+            </div>
+            <span class="badge badge-neutral">Silver1 – Silver20</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="rounded-lg p-3" style="background:var(--hairline)">
+              <p class="kicker mb-1">Dialer Domain</p>
+              <p class="font-data text-[13px] break-all" style="color:var(--text-1)">https://silverbpo.callhub.ai/</p>
+            </div>
+            <div class="rounded-lg p-3" style="background:var(--hairline)">
+              <p class="kicker mb-1">IP Whitelisted Link</p>
+              <p class="font-data text-[13px] break-all" style="color:var(--text-1)">https://silverbpo.callhub.ai:444</p>
+            </div>
+            <div class="rounded-lg p-3" style="background:var(--hairline)">
+              <p class="kicker mb-1">Username Range</p>
+              <p class="font-data text-[13px]" style="color:var(--text-1)">Silver1 – Silver20</p>
+            </div>
+            <div class="rounded-lg p-3" style="background:var(--hairline)">
+              <p class="kicker mb-1">Password Range</p>
+              <p class="font-data text-[13px]" style="color:var(--text-1)">Silver1 – Silver20</p>
+            </div>
+          </div>
+          <p class="text-[12px] mb-4" style="color:var(--text-2)">Login pattern: same ID and password, e.g. <span class="font-data">Silver1 / Silver1</span> through <span class="font-data">Silver20 / Silver20</span>.</p>
+          <div class="flex flex-wrap gap-2">
+            <a class="btn btn-primary" href="https://silverbpo.callhub.ai/" target="_blank" rel="noopener">Open Dialer</a>
+            <a class="btn btn-ghost" href="https://silverbpo.callhub.ai:444" target="_blank" rel="noopener">Open IP Whitelisted Link</a>
+            <button class="btn btn-ghost" id="copy-login-btn">Copy Login Details</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ SETTINGS ============================================================ -->
+      <section class="page" id="page-settings">
+        <div class="max-w-2xl glass hud-frame rounded-xl p-5">
+          <h3 class="font-display font-semibold text-base mb-1" style="color:var(--text-1)">Connection Settings</h3>
+          <p class="text-[12px] mb-5" style="color:var(--text-3)">These values connect the dashboard to your Google Apps Script backend. Campaign management is not configured here — campaigns are static in the code.</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="field-label" for="s-webapp">Google Apps Script Web App URL</label>
+              <input class="field-input" id="s-webapp" placeholder="https://script.google.com/macros/s/XXXXX/exec">
+            </div>
+            <div>
+              <label class="field-label" for="s-sheetid">Google Sheet ID</label>
+              <input class="field-input" id="s-sheetid" placeholder="1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="s-theme">Theme Preference</label>
+                <select class="field-input" id="s-theme">
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="s-refresh">Auto-Refresh Interval (seconds)</label>
+                <input class="field-input" id="s-refresh" type="number" min="15" max="30" value="20">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 mt-6 pt-5 border-t divider">
+            <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+            <span id="settings-status" class="text-[12px]" style="color:var(--text-3)"></span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="px-6 py-4 text-center text-[11px]" style="color:var(--text-3)">
+      Alixo BPO Command Deck · Data served from Google Sheets via Apps Script
+    </footer>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
