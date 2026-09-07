@@ -1,5 +1,5 @@
 // Google Apps Script Web App URL (Hardcoded backend bind)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZJqFfk_eqD9MzGGNXRld8Ucod1I_Wf_jMYYiKWPLrmISOG-nO-ktXrcozG6z2Js3fNA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4l5gzunon3FxJ-Oz_ek0VF5HigFUOjVJSwPtxRT8IsMpcFrESLs4v_tn0V90uEFkIeg/exec";
 
 let allLeads = [];
 let activeCampaignsList = [];
