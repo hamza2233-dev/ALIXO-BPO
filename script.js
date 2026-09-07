@@ -1,533 +1,744 @@
-// Hardcoded Static Campaigns Configuration
+/* =====================================================================
+   ALIXO BPO — Command Dashboard
+   Vanilla JS controller. Talks to a Google Apps Script Web App backend.
+   Campaigns are STATIC and defined here — never fetched from Sheets.
+===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. STATIC CAMPAIGN CONFIGURATION
+--------------------------------------------------------------------- */
 const campaigns = [
-    {
-        name: "MED CPA (BLIND TRANSFER) (JCK)",
-        type: "Static",
-        did: "5618726752",
-        states: "Bad States: NY, WA, CA, DC, HI, AK",
-        timing: "7:00 PM - 03:30 AM",
-        breakTime: "10:00 PM - 11:00 PM",
-        ageLimit: "50-85",
-        dqNotes: "No VA, Tricare, Kizer, Retirement Plan",
-        formLink: "",
-        target: 40,
-        status: "Active"
-    },
-    {
-        name: "MED CPL BLIND TRANSFERS (ADO)",
-        type: "Static",
-        did: "8664349627",
-        states: "Good States: AZ, FL, GA, IL, KS, KY, LA, MO, NC, OH, PA, SC, TN, TX, VA",
-        timing: "07:00 PM - 03:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "65-85",
-        dqNotes: "Standard Medicare qualification",
-        formLink: "https://silverbpo.callhub.ai/form.php",
-        target: 50,
-        status: "Active"
-    },
-    {
-        name: "FE 180 (BLIND TRANSFER) (ADO)",
-        type: "Static",
-        did: "PING",
-        states: "AL, AZ, CO, IL, IN, KS, KY, MI, MO, OH, PA, SC, TN, TX",
-        timing: "06:30 PM - 03:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "50-80",
-        dqNotes: "Final Expense qualification guidelines",
-        formLink: "https://silverbpo.callhub.ai/form3.php",
-        target: 45,
-        status: "Active"
-    },
-    {
-        name: "FE 140 (WARM TRANSFER) (ELIJ)",
-        type: "Static",
-        did: "PING",
-        states: "ALL STATES EXCEPT NYC",
-        timing: "06:00 PM - 06:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "50-80",
-        dqNotes: "ORIGINAL NUMBER ONLY",
-        formLink: "https://ringba-bid-asya.vercel.app/",
-        target: 60,
-        status: "Active"
-    },
-    {
-        name: "90 FE SYED (BLIND TRANSFER) (KD)",
-        type: "Static",
-        did: "8447043251",
-        states: "ALL STATES EXCEPT NYC",
-        timing: "07:00 PM - 04:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "50-80",
-        dqNotes: "Original Number Only & Interested Customers",
-        formLink: "https://syedfe120.vercel.app/",
-        target: 35,
-        status: "Active"
-    },
-    {
-        name: "240 FE (BLIND TRANSFER) (ATTA)",
-        type: "Static",
-        did: "8556692411",
-        states: "Bad States: AR, CO, IL, KY, MA, MI, MO, MT, NY, NV, TN, WV, WY",
-        timing: "07:00 PM - 03:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "50-79",
-        dqNotes: "ORIGINAL NUMBER ONLY",
-        formLink: "",
-        target: 50,
-        status: "Active"
-    },
-    {
-        name: "220 FE (BLIND TRANSFER) (ATTA)",
-        type: "Static",
-        did: "8554713892",
-        states: "AL, AR, AZ, CA, CO, FL, GA, IA, IL, IN, KS, KY, LA, MD, MI, MO, MS, NC, NJ, NM, NV, OH, OR, PA, SC, TN, TX, VA",
-        timing: "06:00 PM - 04:00 AM",
-        breakTime: "NO BREAK",
-        ageLimit: "50-79",
-        dqNotes: "ORIGINAL NUMBER ONLY",
-        formLink: "https://www.leadlync.site/form/",
-        target: 55,
-        status: "Active"
-    },
-    {
-        name: "SYED FE 180 (BLIND TRANSFER) (WEB)",
-        type: "Static",
-        did: "8445061716",
-        states: "ALL STATES EXCEPT NYC",
-        timing: "07:00 PM - 04:00 AM",
-        breakTime: "12:00 AM - 01:00 AM",
-        ageLimit: "50-79",
-        dqNotes: "Original Number Only & Interested Customers",
-        formLink: "",
-        target: 40,
-        status: "Active"
-    }
+  {
+    name: "MED CPA (BLIND TRANSFER) (JCK)",
+    type: "Static",
+    did: "5618726752",
+    states: "Bad States: NY, WA, CA, DC, HI, AK",
+    timing: "7:00 PM - 03:30 AM",
+    breakTime: "10:00 PM - 11:00 PM",
+    ageLimit: "50-85",
+    dqNotes: "No VA, Tricare, Kizer, Retirement Plan",
+    formLink: "",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "MED CPL BLIND TRANSFERS (ADO)",
+    type: "Static",
+    did: "8664349627",
+    states: "Good States: AZ, FL, GA, IL, KS, KY, LA, MO, NC, OH, PA, SC, TN, TX, VA",
+    timing: "07:00 PM - 03:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "65-85",
+    dqNotes: "",
+    formLink: "https://silverbpo.callhub.ai/form.php",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "FE 180 (BLIND TRANSFER) (ADO)",
+    type: "Static",
+    did: "PING",
+    states: "States: AL, AZ, CO, IL, IN, KS, KY, MI, MO, OH, PA, SC, TN, TX",
+    timing: "06:30 PM - 03:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "50-80",
+    dqNotes: "",
+    formLink: "https://silverbpo.callhub.ai/form3.php",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "FE 140 (WARM TRANSFER) (ELIJ)",
+    type: "Static",
+    did: "PING",
+    states: "ALL STATES EXCEPT NYC",
+    timing: "06:00 PM - 06:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "50-80",
+    dqNotes: "ORIGINAL NUMBER ONLY",
+    formLink: "https://ringba-bid-asya.vercel.app/",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "90 FE SYED (BLIND TRANSFER) (KD)",
+    type: "Static",
+    did: "8447043251",
+    states: "ALL STATES EXCEPT NYC",
+    timing: "07:00 PM - 04:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "50-80",
+    dqNotes: "Original Number Only & Interested Customers",
+    formLink: "https://syedfe120.vercel.app/",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "240 FE (BLIND TRANSFER) (ATTA)",
+    type: "Static",
+    did: "8556692411",
+    states: "Bad States: AR, CO, IL, KY, MA, MI, MO, MT, NY, NV, TN, WV, WY",
+    timing: "07:00 PM - 03:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "50-79",
+    dqNotes: "ORIGINAL NUMBER ONLY",
+    formLink: "",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "220 FE (BLIND TRANSFER) (ATTA)",
+    type: "Static",
+    did: "8554713892",
+    states: "States: AL, AR, AZ, CA, CO, FL, GA, IA, IL, IN, KS, KY, LA, MD, MI, MO, MS, NC, NJ, NM, NV, OH, OR, PA, SC, TN, TX, VA",
+    timing: "06:00 PM - 04:00 AM",
+    breakTime: "NO BREAK",
+    ageLimit: "50-79",
+    dqNotes: "ORIGINAL NUMBER ONLY",
+    formLink: "https://www.leadlync.site/form/",
+    target: 25,
+    status: "Active"
+  },
+  {
+    name: "SYED FE 180 (BLIND TRANSFER) (WEB)",
+    type: "Static",
+    did: "8445061716",
+    states: "ALL STATES EXCEPT NYC",
+    timing: "07:00 PM - 04:00 AM",
+    breakTime: "12:00 AM - 01:00 AM",
+    ageLimit: "50-79",
+    dqNotes: "Original Number Only & Interested Customers",
+    formLink: "",
+    target: 25,
+    status: "Active"
+  }
 ];
 
-// Default Apps Script Web App URL (User can update in Settings)
-let APPS_SCRIPT_URL = localStorage.getItem('alixo_gas_url') || "https://script.google.com/macros/s/AKfycbygIpNdl3b-_AiF6ejYy9QLx7lVNZo67s_DeenFLrZ9fW2FOnIh_D17puG1JPfxdyBtgA/exec";
+/* ---------------------------------------------------------------------
+   2. CONFIG (persisted to localStorage, editable in Settings)
+--------------------------------------------------------------------- */
+const DEFAULT_SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
-let allLeads = [];
-let currentDateFilter = 'today';
-let currentAgentFilter = '';
-let customStartDate = null;
-let customEndDate = null;
-let duplicateCheckTimer = null;
-let refreshIntervalTimer = null;
+const Config = {
+  key: "alixo_dashboard_config",
+  data: { webAppUrl: "", sheetId: DEFAULT_SHEET_ID, theme: "dark", refreshInterval: 20 },
+  load(){
+    try{
+      const raw = localStorage.getItem(this.key);
+      if (raw) this.data = { ...this.data, ...JSON.parse(raw) };
+    }catch(e){ /* ignore */ }
+    return this.data;
+  },
+  save(patch){
+    this.data = { ...this.data, ...patch };
+    localStorage.setItem(this.key, JSON.stringify(this.data));
+  }
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('setting-url').value = APPS_SCRIPT_URL;
-    populateCampaignDropdowns();
-    renderActiveCampaignsGrid();
-    fetchAppData();
-    
-    const interval = parseInt(localStorage.getItem('alixo_interval') || '20000');
-    document.getElementById('setting-interval').value = interval;
-    setupAutoRefresh(interval);
-});
-
-function setupAutoRefresh(ms) {
-    if(refreshIntervalTimer) clearInterval(refreshIntervalTimer);
-    refreshIntervalTimer = setInterval(fetchAppData, ms);
-}
-
-// Navigation Tab Switcher
-function switchTab(tabId) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`view-${tabId}`).classList.remove('hidden');
-
-    document.querySelectorAll('.nav-link').forEach(el => {
-        el.classList.remove('bg-blue-600', 'text-white');
-        el.classList.add('text-slate-400');
+/* ---------------------------------------------------------------------
+   3. API layer — talks to the Apps Script Web App
+--------------------------------------------------------------------- */
+const Api = {
+  async get(action, params = {}){
+    const url = new URL(Config.data.webAppUrl);
+    url.searchParams.set("action", action);
+    Object.entries(params).forEach(([k,v]) => { if (v !== undefined && v !== "") url.searchParams.set(k, v); });
+    const res = await fetch(url.toString(), { method: "GET" });
+    if (!res.ok) throw new Error("Network error: " + res.status);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json;
+  },
+  async post(action, payload = {}){
+    if (!Config.data.webAppUrl) throw new Error("No Web App URL configured. Add it in Settings.");
+    // text/plain avoids a CORS preflight against Apps Script
+    const res = await fetch(Config.data.webAppUrl, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action, ...payload })
     });
-    const activeLink = document.querySelector(`[data-target="${tabId}"]`);
-    if(activeLink) {
-        activeLink.classList.remove('text-slate-400');
-        activeLink.classList.add('bg-blue-600', 'text-white');
-    }
+    if (!res.ok) throw new Error("Network error: " + res.status);
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+    return json;
+  }
+};
 
-    const titles = {
-        'dashboard': 'Dashboard Overview',
-        'submit': 'New Lead Submission Form',
-        'campaigns': 'Active Campaigns Directory',
-        'progress': 'Progress & Live Feed',
-        'tools': 'Operational Tools & Dialer',
-        'settings': 'System Settings'
-    };
-    document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
-    if(tabId === 'progress' || tabId === 'dashboard') {
-        fetchAppData();
-    }
-}
+/* ---------------------------------------------------------------------
+   4. Utilities
+--------------------------------------------------------------------- */
+const Util = {
+  normalizePhone(str){ return (str || "").replace(/\D/g, ""); },
+  fmtPhone(digits){
+    if (!digits) return "—";
+    const d = digits.slice(-10);
+    if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+    return digits;
+  },
+  fmtTime(ts){
+    if (!ts) return "—";
+    const d = new Date(ts);
+    if (isNaN(d)) return ts;
+    return d.toLocaleString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit", timeZone:"Asia/Karachi" });
+  },
+  debounce(fn, ms){
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  },
+  escapeHtml(str){
+    return String(str ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  },
+  todayLabelPKT(){
+    return new Date().toLocaleDateString("en-US", { timeZone:"Asia/Karachi", month:"long", day:"numeric" });
+  },
+  monthLabelPKT(){
+    return new Date().toLocaleDateString("en-US", { timeZone:"Asia/Karachi", month:"long", year:"numeric" });
+  }
+};
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebar-backdrop');
-    sidebar.classList.toggle('-translate-x-full');
-    backdrop.classList.toggle('hidden');
-}
+/* ---------------------------------------------------------------------
+   5. Toasts
+--------------------------------------------------------------------- */
+const Toast = {
+  show(msg, type = "info"){
+    const stack = document.getElementById("toastStack");
+    const el = document.createElement("div");
+    el.className = "toast" + (type !== "info" ? " " + type : "");
+    el.textContent = msg;
+    stack.appendChild(el);
+    setTimeout(() => el.remove(), 4200);
+  }
+};
 
-function toggleTheme() {
-    const html = document.documentElement;
-    const icon = document.getElementById('theme-icon');
-    if(html.classList.contains('dark')) {
-        html.classList.remove('dark');
-        icon.className = "fa-solid fa-moon";
-    } else {
-        html.classList.add('dark');
-        icon.className = "fa-solid fa-sun";
-    }
-}
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    const bg = type === 'success' ? 'bg-emerald-600' : 'bg-rose-600';
-    toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2.5 transition-all transform translate-y-2 opacity-0 pointer-events-auto`;
-    toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'} text-sm"></i> ${message}`;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 20);
-    setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
-}
-
-// Populate Static Campaign Dropdowns
-function populateCampaignDropdowns() {
-    const select = document.getElementById('campaign');
-    if(!select) return;
-    select.innerHTML = '<option value="">Select Static Campaign</option>';
-    campaigns.filter(c => c.status === 'Active').forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.name;
-        opt.textContent = c.name;
-        select.appendChild(opt);
+/* ---------------------------------------------------------------------
+   6. Theme
+--------------------------------------------------------------------- */
+const Theme = {
+  init(){
+    const saved = Config.load().theme || "dark";
+    this.apply(saved);
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+      this.apply(next);
+      Config.save({ theme: next });
     });
-}
+  },
+  apply(theme){
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeIconSun").style.display = theme === "light" ? "block" : "none";
+    document.getElementById("themeIconMoon").style.display = theme === "light" ? "none" : "block";
+  }
+};
 
-// Render Active Campaigns Cards
-function renderActiveCampaignsGrid() {
-    const grid = document.getElementById('campaigns-grid');
-    if(!grid) return;
-    const activeCamps = campaigns.filter(c => c.status === 'Active');
-    document.getElementById('active-camp-count').innerText = `${activeCamps.length} Active`;
+/* ---------------------------------------------------------------------
+   7. Navigation
+--------------------------------------------------------------------- */
+const Nav = {
+  titles: {
+    dashboard: "Dashboard", leadsubmission: "Lead Submission", campaigns: "Active Campaigns",
+    progress: "Progress", tools: "Tools", settings: "Settings"
+  },
+  init(){
+    document.querySelectorAll("[data-page]").forEach(btn => {
+      btn.addEventListener("click", () => this.go(btn.dataset.page));
+    });
+    document.getElementById("menuBtn").addEventListener("click", () => this.toggleMobile(true));
+    document.getElementById("scrim").addEventListener("click", () => this.toggleMobile(false));
+  },
+  toggleMobile(open){
+    document.getElementById("sidebar").classList.toggle("open", open);
+    document.getElementById("scrim").classList.toggle("show", open);
+  },
+  go(page){
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page-" + page).classList.add("active");
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.toggle("active", n.dataset.page === page));
+    document.getElementById("pageTitle").textContent = this.titles[page];
+    this.toggleMobile(false);
 
-    grid.innerHTML = activeCamps.map(c => `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
-            <div>
-                <div class="flex justify-between items-start gap-2">
-                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded font-semibold">${c.type}</span>
-                    ${c.did === 'PING' ? '<span class="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-mono font-semibold">PING</span>' : `
-                        <button onclick="navigator.clipboard.writeText('${c.did}'); showToast('DID copied: ${c.did}');" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 flex items-center gap-1.5 font-mono">
-                            <i class="fa-solid fa-copy"></i> ${c.did}
-                        </button>
-                    `}
-                </div>
-                <h4 class="font-bold text-sm mt-3 text-slate-100">${c.name}</h4>
-            </div>
-            
-            <div class="space-y-1.5 text-xs text-slate-400 bg-slate-950 p-3.5 rounded-xl border border-slate-800/80">
-                <p><strong>States:</strong> ${c.states}</p>
-                <p><strong>Timing:</strong> ${c.timing}</p>
-                <p><strong>Break:</strong> ${c.breakTime}</p>
-                <p><strong>Age Limit:</strong> ${c.ageLimit}</p>
-                <p><strong>DQ Notes:</strong> ${c.dqNotes}</p>
-            </div>
+    if (page === "dashboard") Dashboard.refresh();
+    if (page === "campaigns") Campaigns.render();
+    if (page === "progress") Progress.init();
+    if (page === "tools") Tools.render();
+    if (page === "settings") Settings.load();
+  }
+};
 
-            <div class="flex items-center justify-between pt-2">
-                ${c.formLink ? `
-                    <a href="${c.formLink}" target="_blank" class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Transfer Form
-                    </a>
-                ` : '<span class="text-xs text-slate-500">Direct Dialer Transfer</span>'}
-                <span class="text-[11px] text-slate-400">Target: <strong class="text-slate-200">${c.target}/day</strong></span>
-            </div>
-        </div>
-    `).join('');
-}
+/* ---------------------------------------------------------------------
+   8. Dashboard page
+--------------------------------------------------------------------- */
+const Dashboard = {
+  async refresh(){
+    document.getElementById("statTodayFoot").textContent = "since midnight, " + Util.todayLabelPKT();
+    document.getElementById("statMonthFoot").textContent = Util.monthLabelPKT();
+    if (!Config.data.webAppUrl){ this.renderEmpty(); return; }
+    try{
+      const data = await Api.get("getDashboardStats");
+      document.getElementById("statTotal").textContent = data.totalLeads ?? "0";
+      document.getElementById("statToday").textContent = data.todayLeads ?? "0";
+      document.getElementById("statWeek").textContent = data.weekLeads ?? "0";
+      document.getElementById("statMonth").textContent = data.monthLeads ?? "0";
+      document.getElementById("statDup").textContent = data.duplicateLeads ?? "0";
 
-// Real-time Duplicate Checker
-function checkDuplicate(phone) {
-    clearTimeout(duplicateCheckTimer);
-    const statusDiv = document.getElementById('duplicate-status');
-    const submitBtn = document.getElementById('submit-btn');
-    const cleanPhone = phone.replace(/\D/g, "");
+      this.renderRecent(data.recentLeads || []);
+      this.renderCampaignPerf(data.campaignPerformance || {});
+      this.renderTopAgentsMini(data.topAgents || []);
+      Connection.setOk();
+    }catch(err){
+      Connection.setBad();
+      Toast.show("Could not load dashboard stats: " + err.message, "error");
+      this.renderEmpty();
+    }
+  },
+  renderEmpty(){
+    document.querySelector("#recentLeadsTable tbody").innerHTML =
+      `<tr><td colspan="5" class="empty-row">Connect a Web App URL in Settings to load live data.</td></tr>`;
+    document.getElementById("campaignPerfList").innerHTML = `<p class="empty-row">No data yet.</p>`;
+    document.getElementById("topAgentsMini").innerHTML = `<p class="empty-row">No data yet.</p>`;
+  },
+  renderRecent(rows){
+    const tbody = document.querySelector("#recentLeadsTable tbody");
+    if (!rows.length){ tbody.innerHTML = `<tr><td colspan="5" class="empty-row">No leads submitted yet.</td></tr>`; return; }
+    tbody.innerHTML = rows.slice(0, 8).map(r => `
+      <tr>
+        <td>${Util.fmtTime(r.timestamp)}</td>
+        <td>${Util.escapeHtml(r.agentName)}</td>
+        <td>${Util.escapeHtml(r.firstName)} ${Util.escapeHtml(r.lastName)}</td>
+        <td>${Util.escapeHtml(r.campaign)}</td>
+        <td>${Util.escapeHtml(r.state)}</td>
+      </tr>`).join("");
+  },
+  renderCampaignPerf(perf){
+    const active = campaigns.filter(c => c.status === "Active");
+    const html = active.map(c => {
+      const count = perf[c.name] || 0;
+      const pct = Math.min(100, Math.round((count / c.target) * 100));
+      return `
+        <div class="perf-row">
+          <div class="perf-row-top"><span>${Util.escapeHtml(c.name)}</span><b>${count}/${c.target}</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>`;
+    }).join("");
+    document.getElementById("campaignPerfList").innerHTML = html || `<p class="empty-row">No campaign activity today.</p>`;
+  },
+  renderTopAgentsMini(agents){
+    if (!agents.length){ document.getElementById("topAgentsMini").innerHTML = `<p class="empty-row">No agent activity yet.</p>`; return; }
+    document.getElementById("topAgentsMini").innerHTML = agents.slice(0,5).map((a,i) => `
+      <div class="agent-row">
+        <span class="agent-rank">${i+1}</span>
+        <b>${Util.escapeHtml(a.agentName)}</b>
+        <span>${a.count} leads</span>
+      </div>`).join("");
+  }
+};
 
-    if(cleanPhone.length < 7) {
-        statusDiv.innerHTML = "";
+/* ---------------------------------------------------------------------
+   9. Lead Submission page
+--------------------------------------------------------------------- */
+const LeadSubmission = {
+  duplicateFound: false,
+  init(){
+    const select = document.getElementById("campaignSelect");
+    campaigns.filter(c => c.status === "Active").forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.name; opt.textContent = c.name;
+      select.appendChild(opt);
+    });
+
+    const phoneInput = document.getElementById("phoneInput");
+    phoneInput.addEventListener("input", Util.debounce(() => this.checkDuplicate(phoneInput.value), 500));
+
+    document.getElementById("leadForm").addEventListener("submit", (e) => this.submit(e));
+  },
+  async checkDuplicate(rawPhone){
+    const status = document.getElementById("dupeStatus");
+    const dupePanel = document.getElementById("dupeDetails");
+    const submitBtn = document.getElementById("submitLeadBtn");
+    const digits = Util.normalizePhone(rawPhone);
+
+    if (digits.length < 7){
+      status.textContent = ""; status.className = "dupe-status";
+      dupePanel.hidden = true; this.duplicateFound = false; submitBtn.disabled = false;
+      return;
+    }
+
+    status.textContent = "Checking…"; status.className = "dupe-status checking";
+
+    if (!Config.data.webAppUrl){
+      status.textContent = ""; status.className = "dupe-status"; return;
+    }
+
+    try{
+      const res = await Api.get("checkDuplicate", { phone: digits });
+      if (res.duplicate){
+        this.duplicateFound = true;
+        status.textContent = "❌ Duplicate Lead — Do Not Transfer";
+        status.className = "dupe-status dupe";
+        dupePanel.hidden = false;
+        dupePanel.innerHTML = `<h3>Duplicate Lead — Do Not Transfer</h3>` + res.matches.map(m => `
+          <div class="dupe-match">
+            Previous timestamp: <b>${Util.fmtTime(m.timestamp)}</b> ·
+            Previous campaign: <b>${Util.escapeHtml(m.campaign)}</b> ·
+            Previous agent: <b>${Util.escapeHtml(m.agentName)}</b>
+          </div>`).join("");
+        submitBtn.disabled = true;
+      } else {
+        this.duplicateFound = false;
+        status.textContent = "✅ New Lead — You Can Transfer";
+        status.className = "dupe-status ok";
+        dupePanel.hidden = true;
         submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        return;
+      }
+    }catch(err){
+      status.textContent = ""; status.className = "dupe-status";
+      Toast.show("Duplicate check failed: " + err.message, "error");
+    }
+  },
+  async submit(e){
+    e.preventDefault();
+    const form = e.target;
+    const msg = document.getElementById("formMsg");
+
+    if (!form.checkValidity()){ form.reportValidity(); return; }
+    if (this.duplicateFound){
+      msg.textContent = "This phone number is already a duplicate lead."; msg.className = "form-msg error";
+      return;
+    }
+    if (!Config.data.webAppUrl){
+      msg.textContent = "Add a Google Apps Script Web App URL in Settings first."; msg.className = "form-msg error";
+      return;
     }
 
-    statusDiv.innerHTML = `<span class="text-amber-400 flex items-center gap-1"><i class="fa-solid fa-spinner fa-spin"></i> Checking duplicate record...</span>`;
-
-    duplicateCheckTimer = setTimeout(async () => {
-        try {
-            const res = await fetch(`${APPS_SCRIPT_URL}?action=checkDuplicate&phone=${cleanPhone}`);
-            const data = await res.json();
-
-            if(data.status === 'success') {
-                if(data.isDuplicate) {
-                    submitBtn.disabled = true;
-                    submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                    
-                    let html = `<div class="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl space-y-1 mt-2">`;
-                    html += `<p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> ❌ Duplicate Lead — Do Not Transfer</p>`;
-                    data.matches.forEach(m => {
-                        html += `<p class="text-[11px]">• Submitted on ${m.timestamp} under <strong>${m.campaign}</strong> by ${m.agentName}</p>`;
-                    });
-                    html += `</div>`;
-                    statusDiv.innerHTML = html;
-                } else {
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    statusDiv.innerHTML = `<span class="text-emerald-400 font-semibold flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> ✅ New Lead — You Can Transfer</span>`;
-                }
-            }
-        } catch(e) {
-            console.error("Duplicate check error:", e);
-        }
-    }, 400);
-}
-
-// Submit Lead
-async function submitLead(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerText = "Submitting...";
-
+    const fd = new FormData(form);
     const payload = {
-        action: "addLead",
-        agentName: document.getElementById('agentName').value,
-        customerFirstName: document.getElementById('customerFirstName').value,
-        customerLastName: document.getElementById('customerLastName').value,
-        customerPhone: document.getElementById('customerPhone').value,
-        showNumber: document.getElementById('showNumber').value,
-        streetAddress: document.getElementById('streetAddress').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
-        zipcode: document.getElementById('zipcode').value,
-        transferBy: document.getElementById('transferBy').value,
-        duration: document.getElementById('duration').value,
-        campaign: document.getElementById('campaign').value
+      agentName: fd.get("agentName")?.trim(),
+      firstName: fd.get("firstName")?.trim(),
+      lastName: fd.get("lastName")?.trim(),
+      phone: Util.normalizePhone(fd.get("phone")),
+      showNumber: Util.normalizePhone(fd.get("showNumber")),
+      street: fd.get("street")?.trim(),
+      city: fd.get("city")?.trim(),
+      state: fd.get("state")?.trim().toUpperCase(),
+      zipcode: fd.get("zipcode")?.trim(),
+      transferBy: fd.get("transferBy"),
+      duration: fd.get("duration")?.trim(),
+      campaign: fd.get("campaign")
     };
 
-    try {
-        const res = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if(data.status === 'success' || res.ok) {
-            showToast("Lead submitted successfully.");
-            document.getElementById('lead-form').reset();
-            document.getElementById('duplicate-status').innerHTML = "";
-            fetchAppData();
-            switchTab('dashboard');
-        } else {
-            showToast("Failed to submit lead.", "error");
-        }
-    } catch(err) {
-        showToast("Lead submitted successfully.");
-        document.getElementById('lead-form').reset();
-        document.getElementById('duplicate-status').innerHTML = "";
-        fetchAppData();
-        switchTab('dashboard');
-    } finally {
-        btn.disabled = false;
-        btn.innerText = "Submit Lead";
+    const submitBtn = document.getElementById("submitLeadBtn");
+    submitBtn.disabled = true; submitBtn.textContent = "Submitting…";
+    msg.textContent = ""; msg.className = "form-msg";
+
+    try{
+      await Api.post("addLead", payload);
+      msg.textContent = "Lead submitted successfully."; msg.className = "form-msg ok";
+      Toast.show("Lead submitted successfully.", "success");
+      form.reset();
+      document.getElementById("dupeStatus").textContent = "";
+      document.getElementById("dupeDetails").hidden = true;
+      Dashboard.refresh();
+      if (document.getElementById("page-progress").classList.contains("active")) Progress.refreshLiveFeed();
+    }catch(err){
+      msg.textContent = "Error: " + err.message; msg.className = "form-msg error";
+      Toast.show("Submission failed: " + err.message, "error");
+    }finally{
+      submitBtn.disabled = this.duplicateFound;
+      submitBtn.textContent = "Submit Lead";
     }
-}
+  }
+};
 
-// Fetch App Data from Google Sheets via Apps Script
-async function fetchAppData() {
-    const icon = document.getElementById('refresh-icon');
-    if(icon) icon.classList.add('fa-spin');
+/* ---------------------------------------------------------------------
+   10. Active Campaigns page
+--------------------------------------------------------------------- */
+const Campaigns = {
+  perf: {},
+  async render(){
+    const grid = document.getElementById("campaignGrid");
+    const active = campaigns.filter(c => c.status === "Active");
 
-    try {
-        const res = await fetch(`${APPS_SCRIPT_URL}?action=getData`);
-        const data = await res.json();
-        if(data.status === 'success') {
-            allLeads = data.leads || [];
-            updateDashboardMetrics();
-            populateAgentDropdown();
-            renderProgressData();
-        }
-        const now = new Date().toLocaleTimeString();
-        if(document.getElementById('feed-updated')) {
-            document.getElementById('feed-updated').innerText = `Last updated: ${now}`;
-        }
-    } catch(e) {
-        console.error("Fetch data error:", e);
-    } finally {
-        if(icon) icon.classList.remove('fa-spin');
-    }
-}
-
-// Update Dashboard Home View
-function updateDashboardMetrics() {
-    const todayStr = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'});
-    const todayLeads = allLeads.filter(l => l.Timestamp && l.Timestamp.includes(todayStr));
-    
-    const monthStr = new Date().toLocaleDateString('en-GB', {month: 'short', year: 'numeric'});
-    const monthLeads = allLeads.filter(l => l.Timestamp && l.Timestamp.includes(monthStr));
-
-    document.getElementById('dash-today-leads').innerText = todayLeads.length;
-    document.getElementById('dash-month-leads').innerText = monthLeads.length;
-    document.getElementById('dash-active-camps').innerText = campaigns.filter(c => c.status === 'Active').length;
-
-    // Top Campaign Today
-    const campCounts = {};
-    todayLeads.forEach(l => { if(l.Campaign) campCounts[l.Campaign] = (campCounts[l.Campaign] || 0) + 1; });
-    const topCamp = Object.keys(campCounts).reduce((a, b) => campCounts[a] > campCounts[b] ? a : b, "N/A");
-    document.getElementById('dash-top-camp').innerText = topCamp;
-
-    // Today's Table
-    const tbody = document.getElementById('dash-today-table');
-    if(todayLeads.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500">No leads submitted today.</td></tr>`;
-    } else {
-        tbody.innerHTML = todayLeads.slice(0, 8).map(l => `
-            <tr class="hover:bg-slate-800/40">
-                <td class="p-3 font-mono text-slate-400">${l.Timestamp}</td>
-                <td class="p-3 font-semibold text-slate-200">${l["Agent Name"]}</td>
-                <td class="p-3">${l["Customer First Name"]} ${l["Customer Last Name"]}</td>
-                <td class="p-3"><span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[11px] font-medium">${l.Campaign}</span></td>
-                <td class="p-3 text-slate-300">${l["Transfer By"]}</td>
-            </tr>
-        `).join('');
+    if (Config.data.webAppUrl){
+      try{
+        const data = await Api.get("getDashboardStats");
+        this.perf = data.campaignPerformance || {};
+      }catch(e){ /* render with zeros */ }
     }
 
-    renderTopAgents(monthLeads);
-}
-
-// Top 3 Agents This Month (Independent of selected date filter)
-function renderTopAgents(monthLeads) {
-    const counts = {};
-    monthLeads.forEach(l => {
-        const ag = l["Agent Name"];
-        if(ag) counts[ag] = (counts[ag] || 0) + 1;
-    });
-
-    const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 3);
-    const container = document.getElementById('top-agents-list');
-    if(!container) return;
-
-    if(sorted.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">No agent records this month.</p>`;
-        return;
-    }
-
-    container.innerHTML = sorted.map(([agent, count], idx) => `
-        <div class="space-y-1.5">
-            <div class="flex justify-between items-center text-xs">
-                <span class="font-semibold text-slate-200">${idx + 1}. ${agent}</span>
-                <span class="text-blue-400 font-bold">${count} Leads</span>
-            </div>
-            <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                <div class="bg-blue-600 h-full rounded-full" style="width: ${Math.min(100, (count / sorted[0][1]) * 100)}%"></div>
-            </div>
+    grid.innerHTML = active.map(c => {
+      const count = this.perf[c.name] || 0;
+      const pct = Math.min(100, Math.round((count / c.target) * 100));
+      return `
+      <div class="campaign-card">
+        <div class="campaign-card-head">
+          <h3>${Util.escapeHtml(c.name)}</h3>
+          <span class="badge active">ACTIVE</span>
         </div>
-    `).join('');
-}
+        <div class="campaign-meta">
+          <span><b>Type:</b> ${Util.escapeHtml(c.type)}</span>
+          <span><b>Timing:</b> ${Util.escapeHtml(c.timing)}</span>
+          <span><b>Break:</b> ${Util.escapeHtml(c.breakTime)}</span>
+          <span><b>Age:</b> ${Util.escapeHtml(c.ageLimit)}</span>
+        </div>
+        <div class="did-row">
+          <code>${c.did === "PING" ? "PING" : Util.escapeHtml(c.did)}</code>
+          ${c.did !== "PING" ? `<button class="copy-did-btn" title="Copy DID" data-did="${Util.escapeHtml(c.did)}">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z" fill="currentColor"/></svg>
+          </button>` : ""}
+        </div>
+        <div class="campaign-meta">
+          <span>${Util.escapeHtml(c.states)}</span>
+        </div>
+        ${c.dqNotes ? `<div class="dq-note">DQ: ${Util.escapeHtml(c.dqNotes)}</div>` : ""}
+        <div class="campaign-progress">
+          <div class="campaign-progress-top"><span>Today: ${count} leads</span><span>Target: ${c.target}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="campaign-actions">
+          ${c.formLink ? `<a class="primary-btn small" href="${Util.escapeHtml(c.formLink)}" target="_blank" rel="noopener">Before Transfer Form</a>` : ""}
+        </div>
+      </div>`;
+    }).join("");
 
-// Populate Agent Search Dropdown
-function populateAgentDropdown() {
-    const select = document.getElementById('agent-search-select');
-    if(!select) return;
-    const current = select.value;
-    const agents = [...new Set(allLeads.map(l => l["Agent Name"]).filter(Boolean))];
-    select.innerHTML = '<option value="">All Agents</option>' + agents.map(a => `<option value="${a}">${a}</option>`).join('');
-    select.value = current;
-}
+    grid.querySelectorAll(".copy-did-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        navigator.clipboard?.writeText(btn.dataset.did);
+        Toast.show("DID copied: " + btn.dataset.did, "success");
+      });
+    });
+  }
+};
 
-function filterLeadsByAgent(agent) {
-    currentAgentFilter = agent;
-    renderProgressData();
-}
+/* ---------------------------------------------------------------------
+   11. Progress page
+--------------------------------------------------------------------- */
+const Progress = {
+  currentRange: "today",
+  customStart: null,
+  customEnd: null,
+  liveFeedTimer: null,
+  agentsLoaded: false,
 
-function setDateFilter(filter) {
-    currentDateFilter = filter;
-    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
-    event.target.classList.add('bg-blue-600', 'text-white');
-    document.getElementById('custom-range-box').classList.add('hidden');
-    renderProgressData();
-}
+  init(){
+    if (this._bound) { this.refreshAll(); this.restartAutoRefresh(); return; }
+    this._bound = true;
 
-function toggleCustomRange() {
-    currentDateFilter = 'custom';
-    document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
-    event.target.classList.add('bg-blue-600', 'text-white');
-    document.getElementById('custom-range-box').classList.remove('hidden');
-}
+    document.getElementById("dateChips").addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip"); if (!btn) return;
+      document.querySelectorAll("#dateChips .chip").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      this.currentRange = btn.dataset.range;
+      document.getElementById("customRangeRow").hidden = this.currentRange !== "custom";
+      if (this.currentRange !== "custom") this.refreshAll();
+    });
+    document.getElementById("applyRangeBtn").addEventListener("click", () => {
+      this.customStart = document.getElementById("rangeStart").value;
+      this.customEnd = document.getElementById("rangeEnd").value;
+      if (!this.customStart || !this.customEnd){ Toast.show("Pick both a start and end date.", "error"); return; }
+      this.refreshAll();
+    });
+    document.getElementById("agentFilter").addEventListener("change", () => this.refreshAll());
+    document.getElementById("refreshProgressBtn").addEventListener("click", () => this.refreshAll());
 
-function applyCustomRange() {
-    customStartDate = document.getElementById('custom-start').value;
-    customEndDate = document.getElementById('custom-end').value;
-    renderProgressData();
-}
-
-// Render Progress & Live Feed View
-function renderProgressData() {
-    let filtered = allLeads;
-    if(currentAgentFilter) {
-        filtered = filtered.filter(l => l["Agent Name"] === currentAgentFilter);
+    this.refreshAll();
+    this.restartAutoRefresh();
+  },
+  restartAutoRefresh(){
+    clearInterval(this.liveFeedTimer);
+    const secs = Number(Config.data.refreshInterval) || 20;
+    this.liveFeedTimer = setInterval(() => this.refreshLiveFeed(), secs * 1000);
+  },
+  async refreshAll(){
+    if (!Config.data.webAppUrl){
+      Toast.show("Add a Web App URL in Settings to load progress data.", "error");
+      return;
     }
+    await Promise.all([
+      this.refreshStats(),
+      this.refreshLiveFeed(),
+      this.refreshTodayLeads(),
+      this.refreshTopAgents(),
+      this.loadAgentList()
+    ]);
+  },
+  async refreshStats(){
+    try{
+      const agent = document.getElementById("agentFilter").value;
+      const params = { range: this.currentRange, agent };
+      if (this.currentRange === "custom"){ params.start = this.customStart; params.end = this.customEnd; }
+      const data = await Api.get("getProgress", params);
+      document.getElementById("progTotal").textContent = data.totalLeads ?? "0";
+      document.getElementById("progToday").textContent = data.todayLeads ?? "0";
+      document.getElementById("progWeek").textContent = data.weekLeads ?? "0";
+      document.getElementById("progMonth").textContent = data.monthLeads ?? "0";
+      document.getElementById("progRange").textContent = data.rangeLeads ?? "0";
+      Connection.setOk();
+    }catch(err){ Connection.setBad(); Toast.show("Progress load failed: " + err.message, "error"); }
+  },
+  async refreshLiveFeed(){
+    if (!Config.data.webAppUrl) return;
+    try{
+      const data = await Api.get("getLiveFeed", { limit: 40 });
+      const tbody = document.querySelector("#liveFeedTable tbody");
+      const rows = data.leads || [];
+      tbody.innerHTML = rows.length ? rows.map(r => `
+        <tr>
+          <td>${Util.fmtTime(r.timestamp)}</td><td>${Util.escapeHtml(r.agentName)}</td>
+          <td>${Util.escapeHtml(r.firstName)} ${Util.escapeHtml(r.lastName)}</td>
+          <td>${Util.fmtPhone(r.phone)}</td><td>${Util.escapeHtml(r.campaign)}</td>
+          <td>${Util.escapeHtml(r.state)}</td><td>${Util.escapeHtml(r.transferBy)}</td><td>${Util.escapeHtml(r.duration)}</td>
+        </tr>`).join("") : `<tr><td colspan="8" class="empty-row">No leads yet.</td></tr>`;
+    }catch(err){ /* silent on background refresh */ }
+  },
+  async refreshTodayLeads(){
+    if (!Config.data.webAppUrl) return;
+    try{
+      const data = await Api.get("getTodayLeads");
+      const tbody = document.querySelector("#todayLeadsTable tbody");
+      const rows = data.leads || [];
+      tbody.innerHTML = rows.length ? rows.map(r => `
+        <tr>
+          <td>${Util.fmtTime(r.timestamp)}</td><td>${Util.escapeHtml(r.agentName)}</td>
+          <td>${Util.escapeHtml(r.firstName)} ${Util.escapeHtml(r.lastName)}</td>
+          <td>${Util.fmtPhone(r.phone)}</td><td>${Util.escapeHtml(r.campaign)}</td>
+          <td>${Util.escapeHtml(r.state)}</td><td>${Util.escapeHtml(r.transferBy)}</td><td>${Util.escapeHtml(r.duration)}</td>
+        </tr>`).join("") : `<tr><td colspan="8" class="empty-row">No leads submitted today yet.</td></tr>`;
+    }catch(err){ /* silent */ }
+  },
+  async refreshTopAgents(){
+    if (!Config.data.webAppUrl) return;
+    try{
+      const data = await Api.get("getTopAgents");
+      const row = document.getElementById("topAgentsRow");
+      const agents = (data.agents || []).slice(0,3);
+      row.innerHTML = agents.length ? agents.map((a,i) => `
+        <div class="top-agent-card">
+          <div class="rank">#${i+1}</div>
+          <div class="name">${Util.escapeHtml(a.agentName)}</div>
+          <div class="count">${a.count} leads this month</div>
+        </div>`).join("") : `<p class="empty-row">No agent activity this month yet.</p>`;
+    }catch(err){ /* silent */ }
+  },
+  async loadAgentList(){
+    if (this.agentsLoaded || !Config.data.webAppUrl) return;
+    try{
+      const data = await Api.get("getTopAgents", { all: true });
+      const select = document.getElementById("agentFilter");
+      (data.agents || []).forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a.agentName; opt.textContent = a.agentName;
+        select.appendChild(opt);
+      });
+      this.agentsLoaded = true;
+    }catch(e){ /* silent */ }
+  }
+};
 
-    const todayStr = new Date().toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'});
-    const monthStr = new Date().toLocaleDateString('en-GB', {month: 'short', year: 'numeric'});
+/* ---------------------------------------------------------------------
+   12. Tools page
+--------------------------------------------------------------------- */
+const Tools = {
+  links: [
+    { name: "Inhouse Form", url: "https://docs.google.com/forms/d/1aI1zJBzCfVVHZsoN7J9y3IgXlD1jlm3M93QVZNzskGo/edit", note: "Internal intake form" },
+    { name: "TCPA Tools", url: "https://tcpa.tools/", note: "Compliance lookup" },
+    { name: "Pharmacy Form", url: "https://forms.gle/dwKd8qccigrdx7BN7", note: "Pharmacy verification" },
+    { name: "Searching Website", url: "https://uspeoplesearch.net/", note: "People / number lookup" },
+    { name: "Inbound Transfer Form", url: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSd8A350LojvYD9qY78p1uydYB15lDscFtqiMABMLfsAxizG_Q/formResponse", note: "Inbound transfer logging" }
+  ],
+  rendered: false,
+  render(){
+    if (this.rendered) return;
+    document.getElementById("toolsGrid").innerHTML = this.links.map(l => `
+      <a class="tool-card" href="${l.url}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M14 3v2h3.6l-9.8 9.8 1.4 1.4L19 6.4V10h2V3h-7zM5 5h5V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-5h-2v5H5V5z" fill="currentColor"/></svg>
+        <b>${Util.escapeHtml(l.name)}</b>
+        <span>${Util.escapeHtml(l.note)}</span>
+      </a>`).join("");
 
-    const todayCount = filtered.filter(l => l.Timestamp && l.Timestamp.includes(todayStr)).length;
-    const monthCount = filtered.filter(l => l.Timestamp && l.Timestamp.includes(monthStr)).length;
+    document.getElementById("copyLoginBtn").addEventListener("click", () => {
+      const text = "Dialer Domain: https://silverbpo.callhub.ai/\nIP Whitelisted Link: https://silverbpo.callhub.ai:444\nUsername: Silver1 - Silver20\nPassword: Silver1 - Silver20\nLogin: Same ID and Same Password";
+      navigator.clipboard?.writeText(text);
+      Toast.show("Login details copied.", "success");
+    });
+    this.rendered = true;
+  }
+};
 
-    document.getElementById('stat-total').innerText = filtered.length;
-    document.getElementById('stat-today').innerText = todayCount;
-    document.getElementById('stat-week').innerText = Math.round(monthCount / 4);
-    document.getElementById('stat-month').innerText = monthCount;
-    document.getElementById('stat-range').innerText = filtered.length;
+/* ---------------------------------------------------------------------
+   13. Settings page
+--------------------------------------------------------------------- */
+const Settings = {
+  init(){
+    document.getElementById("settingsForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const webAppUrl = document.getElementById("settingWebAppUrl").value.trim();
+      const sheetId = document.getElementById("settingSheetId").value.trim();
+      const theme = document.getElementById("settingTheme").value;
+      const refreshInterval = Number(document.getElementById("settingRefresh").value) || 20;
 
-    const feedTable = document.getElementById('live-feed-table');
-    if(!feedTable) return;
+      Config.save({ webAppUrl, sheetId, theme, refreshInterval });
+      Theme.apply(theme);
+      Progress.restartAutoRefresh?.();
 
-    if(filtered.length === 0) {
-        feedTable.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500">No matching lead records found.</td></tr>`;
-    } else {
-        feedTable.innerHTML = filtered.slice(0, 20).map(l => `
-            <tr class="hover:bg-slate-800/40">
-                <td class="p-3 font-mono text-blue-400">${l.Timestamp}</td>
-                <td class="p-3 font-semibold text-slate-200">${l["Agent Name"]}</td>
-                <td class="p-3">${l["Customer First Name"]} ${l["Customer Last Name"]}</td>
-                <td class="p-3 font-mono">${l["Customer Phone Number"]}</td>
-                <td class="p-3"><span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[11px]">${l.Campaign}</span></td>
-                <td class="p-3">${l.State}</td>
-                <td class="p-3 text-slate-300">${l["Transfer By"]}</td>
-                <td class="p-3 font-mono">${l.Duration}</td>
-            </tr>
-        `).join('');
+      const msg = document.getElementById("settingsMsg");
+      msg.textContent = "Settings saved."; msg.className = "form-msg ok";
+      Toast.show("Settings saved.", "success");
+      Connection.check();
+      Dashboard.refresh();
+    });
+  },
+  load(){
+    const c = Config.load();
+    document.getElementById("settingWebAppUrl").value = c.webAppUrl || "";
+    document.getElementById("settingSheetId").value = c.sheetId || DEFAULT_SHEET_ID;
+    document.getElementById("settingTheme").value = c.theme || "dark";
+    document.getElementById("settingRefresh").value = c.refreshInterval || 20;
+  }
+};
+
+/* ---------------------------------------------------------------------
+   14. Connection indicator
+--------------------------------------------------------------------- */
+const Connection = {
+  setOk(){ document.getElementById("connDot").className = "conn-dot ok"; document.getElementById("connLabel").textContent = "Connected to Sheets"; },
+  setBad(){ document.getElementById("connDot").className = "conn-dot bad"; document.getElementById("connLabel").textContent = "Link unavailable"; },
+  async check(){
+    if (!Config.data.webAppUrl){
+      document.getElementById("connDot").className = "conn-dot";
+      document.getElementById("connLabel").textContent = "No Web App URL set";
+      return;
     }
+    try{ await Api.get("getDashboardStats"); this.setOk(); }catch(e){ this.setBad(); }
+  }
+};
+
+/* ---------------------------------------------------------------------
+   15. Clock
+--------------------------------------------------------------------- */
+function tickClock(){
+  const el = document.getElementById("pageClock");
+  el.textContent = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Karachi", weekday:"short", month:"short", day:"numeric",
+    hour:"numeric", minute:"2-digit", second:"2-digit"
+  }) + " PKT";
 }
 
-function copyDialerCredentials() {
-    navigator.clipboard.writeText("Dialer: https://silverbpo.callhub.ai/\nIP Link: https://silverbpo.callhub.ai:444\nUsername/Password format: Silver1 to Silver20");
-    showToast("Dialer credentials copied to clipboard.");
-}
+/* ---------------------------------------------------------------------
+   16. Boot
+--------------------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  Config.load();
+  Theme.init();
+  Nav.init();
+  LeadSubmission.init();
+  Settings.init();
 
-function saveSettings() {
-    const url = document.getElementById('setting-url').value.trim();
-    const interval = document.getElementById('setting-interval').value;
-    if(url) {
-        APPS_SCRIPT_URL = url;
-        localStorage.setItem('alixo_gas_url', url);
-        localStorage.setItem('alixo_interval', interval);
-        setupAutoRefresh(parseInt(interval));
-        showToast("Settings saved successfully.");
-        fetchAppData();
-    } else {
-        showToast("Please enter a valid Web App URL.", "error");
-    }
-}
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  Connection.check();
+  Dashboard.refresh();
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    Toast.show("Logout is a placeholder — wire up your auth provider here.");
+  });
+});
