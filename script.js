@@ -115,17 +115,21 @@ const campaigns = [
 ];
 
 /* ---------------------------------------------------------------------
-   2. CONFIG (persisted to localStorage, editable in Settings)
+   2. BACKEND CONFIG — edit these two lines yourself, no UI for this.
+   WEB_APP_URL: the /exec URL from your Apps Script deployment.
+   SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const DEFAULT_SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
+const WEB_APP_URL = ""; // <-- paste your Apps Script Web App URL here
+const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
+/* Theme + auto-refresh are the only things still remembered per-browser. */
 const Config = {
-  key: "alixo_dashboard_config",
-  data: { webAppUrl: "", sheetId: DEFAULT_SHEET_ID, theme: "dark", refreshInterval: 20 },
+  key: "alixo_dashboard_prefs",
+  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "dark", refreshInterval: 20 },
   load(){
     try{
       const raw = localStorage.getItem(this.key);
-      if (raw) this.data = { ...this.data, ...JSON.parse(raw) };
+      if (raw) this.data = { ...this.data, ...JSON.parse(raw), webAppUrl: WEB_APP_URL, sheetId: SHEET_ID };
     }catch(e){ /* ignore */ }
     return this.data;
   },
@@ -150,7 +154,7 @@ const Api = {
     return json;
   },
   async post(action, payload = {}){
-    if (!Config.data.webAppUrl) throw new Error("No Web App URL configured. Add it in Settings.");
+    if (!Config.data.webAppUrl) throw new Error("No Web App URL configured. Set WEB_APP_URL in script.js.");
     // text/plain avoids a CORS preflight against Apps Script
     const res = await fetch(Config.data.webAppUrl, {
       method: "POST",
@@ -236,7 +240,7 @@ const Theme = {
 const Nav = {
   titles: {
     dashboard: "Dashboard", leadsubmission: "Lead Submission", campaigns: "Active Campaigns",
-    progress: "Progress", tools: "Tools", settings: "Settings"
+    progress: "Progress", tools: "Tools"
   },
   init(){
     document.querySelectorAll("[data-page]").forEach(btn => {
@@ -260,7 +264,6 @@ const Nav = {
     if (page === "campaigns") Campaigns.render();
     if (page === "progress") Progress.init();
     if (page === "tools") Tools.render();
-    if (page === "settings") Settings.load();
   }
 };
 
@@ -292,7 +295,7 @@ const Dashboard = {
   },
   renderEmpty(){
     document.querySelector("#recentLeadsTable tbody").innerHTML =
-      `<tr><td colspan="5" class="empty-row">Connect a Web App URL in Settings to load live data.</td></tr>`;
+      `<tr><td colspan="5" class="empty-row">Set WEB_APP_URL in script.js to load live data.</td></tr>`;
     document.getElementById("campaignPerfList").innerHTML = `<p class="empty-row">No data yet.</p>`;
     document.getElementById("topAgentsMini").innerHTML = `<p class="empty-row">No data yet.</p>`;
   },
@@ -405,7 +408,7 @@ const LeadSubmission = {
       return;
     }
     if (!Config.data.webAppUrl){
-      msg.textContent = "Add a Google Apps Script Web App URL in Settings first."; msg.className = "form-msg error";
+      msg.textContent = "Set WEB_APP_URL at the top of script.js first."; msg.className = "form-msg error";
       return;
     }
 
@@ -549,7 +552,7 @@ const Progress = {
   },
   async refreshAll(){
     if (!Config.data.webAppUrl){
-      Toast.show("Add a Web App URL in Settings to load progress data.", "error");
+      Toast.show("Set WEB_APP_URL in script.js to load progress data.", "error");
       return;
     }
     await Promise.all([
@@ -664,39 +667,7 @@ const Tools = {
 };
 
 /* ---------------------------------------------------------------------
-   13. Settings page
---------------------------------------------------------------------- */
-const Settings = {
-  init(){
-    document.getElementById("settingsForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const webAppUrl = document.getElementById("settingWebAppUrl").value.trim();
-      const sheetId = document.getElementById("settingSheetId").value.trim();
-      const theme = document.getElementById("settingTheme").value;
-      const refreshInterval = Number(document.getElementById("settingRefresh").value) || 20;
-
-      Config.save({ webAppUrl, sheetId, theme, refreshInterval });
-      Theme.apply(theme);
-      Progress.restartAutoRefresh?.();
-
-      const msg = document.getElementById("settingsMsg");
-      msg.textContent = "Settings saved."; msg.className = "form-msg ok";
-      Toast.show("Settings saved.", "success");
-      Connection.check();
-      Dashboard.refresh();
-    });
-  },
-  load(){
-    const c = Config.load();
-    document.getElementById("settingWebAppUrl").value = c.webAppUrl || "";
-    document.getElementById("settingSheetId").value = c.sheetId || DEFAULT_SHEET_ID;
-    document.getElementById("settingTheme").value = c.theme || "dark";
-    document.getElementById("settingRefresh").value = c.refreshInterval || 20;
-  }
-};
-
-/* ---------------------------------------------------------------------
-   14. Connection indicator
+   13. Connection indicator
 --------------------------------------------------------------------- */
 const Connection = {
   setOk(){ document.getElementById("connDot").className = "conn-dot ok"; document.getElementById("connLabel").textContent = "Connected to Sheets"; },
@@ -704,7 +675,7 @@ const Connection = {
   async check(){
     if (!Config.data.webAppUrl){
       document.getElementById("connDot").className = "conn-dot";
-      document.getElementById("connLabel").textContent = "No Web App URL set";
+      document.getElementById("connLabel").textContent = "Set WEB_APP_URL in script.js";
       return;
     }
     try{ await Api.get("getDashboardStats"); this.setOk(); }catch(e){ this.setBad(); }
@@ -730,7 +701,6 @@ document.addEventListener("DOMContentLoaded", () => {
   Theme.init();
   Nav.init();
   LeadSubmission.init();
-  Settings.init();
 
   tickClock();
   setInterval(tickClock, 1000);
