@@ -196,6 +196,8 @@ h1,h2,h3{ font-family:var(--font-display); margin:0; letter-spacing:.01em; }
 .primary-btn.small, .ghost-btn.small{ padding:7px 12px; font-size:12px; }
 
 .quick-actions{ display:flex; flex-direction:column; gap:10px; }
+.quick-actions-row{ flex-direction:row; flex-wrap:wrap; }
+.quick-actions-row .quick-btn{ flex:1; min-width:220px; }
 .quick-btn{ background:var(--surface-2); border:1px solid var(--border); color:var(--text); justify-content:flex-start; padding:14px 16px; }
 .quick-btn:hover{ border-color:var(--cyan); color:var(--cyan); }
 
@@ -211,13 +213,43 @@ h1,h2,h3{ font-family:var(--font-display); margin:0; letter-spacing:.01em; }
 .data-table tbody tr:hover{ background:var(--surface-2); }
 .empty-row{ color:var(--text-faint); text-align:center; padding:18px !important; white-space:normal !important; }
 
-/* ---------- Perf / agent lists ---------- */
+/* ---------- Today's Campaign Performance — live radial illustration ---------- */
+.perf-panel{ position:relative; overflow:hidden; }
+.perf-panel::after{
+  content:""; position:absolute; top:-50%; left:50%; transform:translateX(-50%);
+  width:70%; height:220%; background:radial-gradient(ellipse at center, var(--blue-soft), transparent 65%);
+  pointer-events:none;
+}
+.perf-rings{
+  position:relative; display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+  gap:22px 16px; padding-top:6px;
+}
+.perf-ring-card{ display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center; }
+.perf-ring{
+  --pct:0; --ring-color:var(--cyan);
+  position:relative; width:112px; height:112px; border-radius:50%;
+  background:conic-gradient(var(--ring-color) calc(var(--pct)*1%), var(--surface-2) 0);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 22px -6px var(--ring-color);
+  animation:ringIn .7s cubic-bezier(.2,.8,.2,1) both;
+}
+.perf-ring::before{
+  content:""; position:absolute; inset:9px; border-radius:50%; background:var(--surface);
+}
+.perf-ring-inner{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
+.perf-ring-value{ font-family:var(--font-display); font-size:19px; font-weight:700; line-height:1.1; }
+.perf-ring-sub{ font-size:9.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.04em; }
+.perf-ring-name{ font-size:11.5px; font-weight:600; max-width:150px; line-height:1.25; }
+.perf-ring-target{ font-size:10.5px; color:var(--text-faint); }
+@keyframes ringIn{ from{ opacity:0; transform:scale(.6);} to{ opacity:1; transform:scale(1);} }
+
+/* legacy linear bar (still used on the Active Campaigns cards) */
 .perf-list, .agent-list{ display:flex; flex-direction:column; gap:12px; }
 .perf-row{ display:flex; flex-direction:column; gap:4px; }
 .perf-row-top{ display:flex; justify-content:space-between; font-size:12.5px; }
 .perf-row-top b{ font-weight:600; }
 .bar-track{ height:6px; border-radius:4px; background:var(--surface-2); overflow:hidden; }
-.bar-fill{ height:100%; background:linear-gradient(90deg, var(--blue), var(--cyan)); border-radius:4px; }
+.bar-fill{ height:100%; background:linear-gradient(90deg, var(--blue), var(--cyan)); border-radius:4px; transition:width .5s ease; }
 .agent-row{ display:flex; align-items:center; gap:10px; font-size:12.5px; }
 .agent-rank{ width:22px; height:22px; border-radius:6px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--cyan); flex:none; }
 .agent-row b{ flex:1; }
