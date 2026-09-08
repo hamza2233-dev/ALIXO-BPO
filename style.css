@@ -240,6 +240,8 @@ h1,h2,h3{ font-family:var(--font-display); margin:0; letter-spacing:.01em; }
 .dupe-status.ok{ color:var(--green); }
 .dupe-status.dupe{ color:var(--red); }
 
+.dupe-search-row{ display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; }
+
 .dupe-panel{
   margin-top:16px; border:1px solid var(--red); background:var(--red-soft); border-radius:10px; padding:14px 16px;
 }
