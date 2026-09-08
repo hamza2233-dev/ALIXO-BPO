@@ -119,13 +119,13 @@ const campaigns = [
    WEB_APP_URL: the /exec URL from your Apps Script deployment.
    SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyx4zQCGxZM4V_H8EteUlIYqXYKQlbeH6pY7UrgKeDBZspoqKlfAsnP5KjgpL33bNneDA/exec"; // <-- paste your Apps Script Web App URL here
+const WEB_APP_URL = ""; // <-- paste your Apps Script Web App URL here
 const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
 /* Theme + auto-refresh are the only things still remembered per-browser. */
 const Config = {
   key: "alixo_dashboard_prefs",
-  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "dark", refreshInterval: 20 },
+  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "light", refreshInterval: 20 },
   load(){
     try{
       const raw = localStorage.getItem(this.key);
@@ -219,7 +219,7 @@ const Toast = {
 --------------------------------------------------------------------- */
 const Theme = {
   init(){
-    const saved = Config.load().theme || "dark";
+    const saved = Config.load().theme || "light";
     this.apply(saved);
     document.getElementById("themeToggle").addEventListener("click", () => {
       const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
