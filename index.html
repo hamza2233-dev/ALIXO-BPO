@@ -207,8 +207,8 @@
               </label>
 
               <label class="field">
-                <span>Show Number</span>
-                <input type="tel" name="showNumber" autocomplete="off" />
+                <span>Show Number *</span>
+                <input type="tel" name="showNumber" required autocomplete="off" />
               </label>
               <label class="field">
                 <span>Street Address *</span>
@@ -228,12 +228,7 @@
               </label>
               <label class="field">
                 <span>Transfer By *</span>
-                <select name="transferBy" required>
-                  <option value="">Select…</option>
-                  <option>Blind Transfer</option>
-                  <option>Warm Transfer</option>
-                  <option>PING</option>
-                </select>
+                <input type="text" name="transferBy" required autocomplete="off" placeholder="Agent name" />
               </label>
               <label class="field">
                 <span>Duration *</span>
