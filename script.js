@@ -119,7 +119,7 @@ const campaigns = [
    WEB_APP_URL: the /exec URL from your Apps Script deployment.
    SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzm-ojOGKFD0MQuyqGzAqACUuXJNiGU6E_b3QBay_8OQh7hlgkuTKhKhoJPI4YVIE4sXw/exec"; // <-- paste your Apps Script Web App URL here
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqasKCblQbUz7E0ztkUw5atUGbQDpd1T9XFHY5_FKmEMuzXl48ab3MCn6jbn3ZA_ArhA/exec"; // <-- paste your Apps Script Web App URL here
 const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
 /* Theme + auto-refresh are the only things still remembered per-browser. */
@@ -183,7 +183,7 @@ const Util = {
     if (!ts) return "—";
     const d = new Date(ts);
     if (isNaN(d)) return ts;
-    return d.toLocaleString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit", timeZone:"Asia/Karachi" });
+    return d.toLocaleString("en-US", { month:"short", day:"numeric", hour:"numeric", minute:"2-digit", timeZone:"America/New_York" });
   },
   debounce(fn, ms){
     let t;
@@ -192,11 +192,11 @@ const Util = {
   escapeHtml(str){
     return String(str ?? "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
   },
-  todayLabelPKT(){
-    return new Date().toLocaleDateString("en-US", { timeZone:"Asia/Karachi", month:"long", day:"numeric" });
+  todayLabelET(){
+    return new Date().toLocaleDateString("en-US", { timeZone:"America/New_York", month:"long", day:"numeric" });
   },
-  monthLabelPKT(){
-    return new Date().toLocaleDateString("en-US", { timeZone:"Asia/Karachi", month:"long", year:"numeric" });
+  monthLabelET(){
+    return new Date().toLocaleDateString("en-US", { timeZone:"America/New_York", month:"long", year:"numeric" });
   }
 };
 
@@ -239,8 +239,8 @@ const Theme = {
 --------------------------------------------------------------------- */
 const Nav = {
   titles: {
-    dashboard: "Dashboard", leadsubmission: "Lead Submission", campaigns: "Active Campaigns",
-    progress: "Progress", tools: "Tools"
+    dashboard: "Dashboard", leadsubmission: "Lead Submission", dupechecker: "Dupe Checker",
+    campaigns: "Active Campaigns", progress: "Progress", tools: "Tools"
   },
   init(){
     document.querySelectorAll("[data-page]").forEach(btn => {
@@ -261,6 +261,7 @@ const Nav = {
     this.toggleMobile(false);
 
     if (page === "dashboard") Dashboard.refresh();
+    if (page === "dupechecker") DupeChecker.init();
     if (page === "campaigns") Campaigns.render();
     if (page === "progress") Progress.init();
     if (page === "tools") Tools.render();
@@ -272,8 +273,8 @@ const Nav = {
 --------------------------------------------------------------------- */
 const Dashboard = {
   async refresh(){
-    document.getElementById("statTodayFoot").textContent = "since midnight, " + Util.todayLabelPKT();
-    document.getElementById("statMonthFoot").textContent = Util.monthLabelPKT();
+    document.getElementById("statTodayFoot").textContent = "since midnight, " + Util.todayLabelET();
+    document.getElementById("statMonthFoot").textContent = Util.monthLabelET();
     if (!Config.data.webAppUrl){ this.renderEmpty(); return; }
     try{
       const data = await Api.get("getDashboardStats");
@@ -337,9 +338,11 @@ const Dashboard = {
 
 /* ---------------------------------------------------------------------
    9. Lead Submission page
+   Note: duplicate checking is NOT done here — some customers legitimately
+   qualify for more than one campaign. Use the separate Dupe Checker page
+   to look a number up before transferring.
 --------------------------------------------------------------------- */
 const LeadSubmission = {
-  duplicateFound: false,
   init(){
     const select = document.getElementById("campaignSelect");
     campaigns.filter(c => c.status === "Active").forEach(c => {
@@ -348,54 +351,7 @@ const LeadSubmission = {
       select.appendChild(opt);
     });
 
-    const phoneInput = document.getElementById("phoneInput");
-    phoneInput.addEventListener("input", Util.debounce(() => this.checkDuplicate(phoneInput.value), 500));
-
     document.getElementById("leadForm").addEventListener("submit", (e) => this.submit(e));
-  },
-  async checkDuplicate(rawPhone){
-    const status = document.getElementById("dupeStatus");
-    const dupePanel = document.getElementById("dupeDetails");
-    const submitBtn = document.getElementById("submitLeadBtn");
-    const digits = Util.normalizePhone(rawPhone);
-
-    if (digits.length < 7){
-      status.textContent = ""; status.className = "dupe-status";
-      dupePanel.hidden = true; this.duplicateFound = false; submitBtn.disabled = false;
-      return;
-    }
-
-    status.textContent = "Checking…"; status.className = "dupe-status checking";
-
-    if (!Config.data.webAppUrl){
-      status.textContent = ""; status.className = "dupe-status"; return;
-    }
-
-    try{
-      const res = await Api.get("checkDuplicate", { phone: digits });
-      if (res.duplicate){
-        this.duplicateFound = true;
-        status.textContent = "❌ Duplicate Lead — Do Not Transfer";
-        status.className = "dupe-status dupe";
-        dupePanel.hidden = false;
-        dupePanel.innerHTML = `<h3>Duplicate Lead — Do Not Transfer</h3>` + res.matches.map(m => `
-          <div class="dupe-match">
-            Previous timestamp: <b>${Util.fmtTime(m.timestamp)}</b> ·
-            Previous campaign: <b>${Util.escapeHtml(m.campaign)}</b> ·
-            Previous agent: <b>${Util.escapeHtml(m.agentName)}</b>
-          </div>`).join("");
-        submitBtn.disabled = true;
-      } else {
-        this.duplicateFound = false;
-        status.textContent = "✅ New Lead — You Can Transfer";
-        status.className = "dupe-status ok";
-        dupePanel.hidden = true;
-        submitBtn.disabled = false;
-      }
-    }catch(err){
-      status.textContent = ""; status.className = "dupe-status";
-      Toast.show("Duplicate check failed: " + err.message, "error");
-    }
   },
   async submit(e){
     e.preventDefault();
@@ -403,10 +359,6 @@ const LeadSubmission = {
     const msg = document.getElementById("formMsg");
 
     if (!form.checkValidity()){ form.reportValidity(); return; }
-    if (this.duplicateFound){
-      msg.textContent = "This phone number is already a duplicate lead."; msg.className = "form-msg error";
-      return;
-    }
     if (!Config.data.webAppUrl){
       msg.textContent = "Set WEB_APP_URL at the top of script.js first."; msg.className = "form-msg error";
       return;
@@ -433,20 +385,73 @@ const LeadSubmission = {
     msg.textContent = ""; msg.className = "form-msg";
 
     try{
-      await Api.post("addLead", payload);
-      msg.textContent = "Lead submitted successfully."; msg.className = "form-msg ok";
-      Toast.show("Lead submitted successfully.", "success");
+      const res = await Api.post("addLead", payload);
+      const stamp = Util.fmtTime(res.timestamp);
+      msg.textContent = `Lead submitted successfully — ${stamp} ET.`; msg.className = "form-msg ok";
+      Toast.show(`Lead submitted successfully — ${stamp} ET.`, "success");
       form.reset();
-      document.getElementById("dupeStatus").textContent = "";
-      document.getElementById("dupeDetails").hidden = true;
       Dashboard.refresh();
       if (document.getElementById("page-progress").classList.contains("active")) Progress.refreshLiveFeed();
     }catch(err){
       msg.textContent = "Error: " + err.message; msg.className = "form-msg error";
       Toast.show("Submission failed: " + err.message, "error");
     }finally{
-      submitBtn.disabled = this.duplicateFound;
+      submitBtn.disabled = false;
       submitBtn.textContent = "Submit Lead";
+    }
+  }
+};
+
+/* ---------------------------------------------------------------------
+   9b. Dupe Checker page — standalone lookup, does not block submission
+--------------------------------------------------------------------- */
+const DupeChecker = {
+  init(){
+    if (this._bound) return;
+    this._bound = true;
+    document.getElementById("dupeCheckForm").addEventListener("submit", (e) => this.search(e));
+  },
+  async search(e){
+    e.preventDefault();
+    const phoneInput = document.getElementById("dupeCheckPhone");
+    const msg = document.getElementById("dupeCheckMsg");
+    const btn = document.getElementById("dupeCheckBtn");
+    const tbody = document.querySelector("#dupeCheckTable tbody");
+    const digits = Util.normalizePhone(phoneInput.value);
+
+    if (digits.length < 7){
+      msg.textContent = "Enter a full phone number."; msg.className = "form-msg error";
+      return;
+    }
+    if (!Config.data.webAppUrl){
+      msg.textContent = "Set WEB_APP_URL at the top of script.js first."; msg.className = "form-msg error";
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = "Searching…";
+    msg.textContent = ""; msg.className = "form-msg";
+
+    try{
+      const res = await Api.get("checkDuplicate", { phone: digits });
+      if (!res.duplicate || !res.matches.length){
+        msg.textContent = "✅ No prior submissions found for this number."; msg.className = "form-msg ok";
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-row">No matches found.</td></tr>`;
+      } else {
+        msg.textContent = `Found ${res.matches.length} prior submission(s) for this number.`; msg.className = "form-msg";
+        tbody.innerHTML = res.matches.map(m => `
+          <tr>
+            <td>${Util.fmtTime(m.timestamp)}</td>
+            <td>${Util.escapeHtml(m.agentName)}</td>
+            <td>${Util.escapeHtml(m.firstName || "")} ${Util.escapeHtml(m.lastName || "")}</td>
+            <td>${Util.escapeHtml(m.campaign)}</td>
+            <td>${Util.escapeHtml(m.state || "")}</td>
+          </tr>`).join("");
+      }
+    }catch(err){
+      msg.textContent = "Search failed: " + err.message; msg.className = "form-msg error";
+      Toast.show("Dupe check failed: " + err.message, "error");
+    }finally{
+      btn.disabled = false; btn.textContent = "Search";
     }
   }
 };
@@ -587,9 +592,8 @@ const Progress = {
         <tr>
           <td>${Util.fmtTime(r.timestamp)}</td><td>${Util.escapeHtml(r.agentName)}</td>
           <td>${Util.escapeHtml(r.firstName)} ${Util.escapeHtml(r.lastName)}</td>
-          <td>${Util.fmtPhone(r.phone)}</td><td>${Util.escapeHtml(r.campaign)}</td>
-          <td>${Util.escapeHtml(r.state)}</td><td>${Util.escapeHtml(r.transferBy)}</td><td>${Util.escapeHtml(r.duration)}</td>
-        </tr>`).join("") : `<tr><td colspan="8" class="empty-row">No leads yet.</td></tr>`;
+          <td>${Util.escapeHtml(r.campaign)}</td>
+        </tr>`).join("") : `<tr><td colspan="4" class="empty-row">No leads yet.</td></tr>`;
     }catch(err){ /* silent on background refresh */ }
   },
   async refreshTodayLeads(){
@@ -688,9 +692,9 @@ const Connection = {
 function tickClock(){
   const el = document.getElementById("pageClock");
   el.textContent = new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Karachi", weekday:"short", month:"short", day:"numeric",
+    timeZone: "America/New_York", weekday:"short", month:"short", day:"numeric",
     hour:"numeric", minute:"2-digit", second:"2-digit"
-  }) + " PKT";
+  }) + " ET";
 }
 
 /* ---------------------------------------------------------------------
