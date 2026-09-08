@@ -119,7 +119,7 @@ const campaigns = [
    WEB_APP_URL: the /exec URL from your Apps Script deployment.
    SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyx4zQCGxZM4V_H8EteUlIYqXYKQlbeH6pY7UrgKeDBZspoqKlfAsnP5KjgpL33bNneDA/exec"; // <-- paste your Apps Script Web App URL here
+const WEB_APP_URL = ""; // <-- paste your Apps Script Web App URL here
 const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
 /* Theme + auto-refresh are the only things still remembered per-browser. */
@@ -272,6 +272,7 @@ const Nav = {
    8. Dashboard page
 --------------------------------------------------------------------- */
 const Dashboard = {
+  autoTimer: null,
   async refresh(){
     document.getElementById("statTodayFoot").textContent = "since midnight, " + Util.todayLabelET();
     document.getElementById("statMonthFoot").textContent = Util.monthLabelET();
@@ -294,16 +295,23 @@ const Dashboard = {
       this.renderEmpty();
     }
   },
+  startAutoRefresh(){
+    clearInterval(this.autoTimer);
+    const secs = Number(Config.data.refreshInterval) || 20;
+    this.autoTimer = setInterval(() => {
+      if (document.getElementById("page-dashboard").classList.contains("active")) this.refresh();
+    }, secs * 1000);
+  },
   renderEmpty(){
     document.querySelector("#recentLeadsTable tbody").innerHTML =
       `<tr><td colspan="5" class="empty-row">Set WEB_APP_URL in script.js to load live data.</td></tr>`;
-    document.getElementById("campaignPerfList").innerHTML = `<p class="empty-row">No data yet.</p>`;
+    document.getElementById("campaignPerfRings").innerHTML = `<p class="empty-row">No data yet.</p>`;
     document.getElementById("topAgentsMini").innerHTML = `<p class="empty-row">No data yet.</p>`;
   },
   renderRecent(rows){
     const tbody = document.querySelector("#recentLeadsTable tbody");
     if (!rows.length){ tbody.innerHTML = `<tr><td colspan="5" class="empty-row">No leads submitted yet.</td></tr>`; return; }
-    tbody.innerHTML = rows.slice(0, 8).map(r => `
+    tbody.innerHTML = rows.slice(0, 5).map(r => `
       <tr>
         <td>${Util.fmtTime(r.timestamp)}</td>
         <td>${Util.escapeHtml(r.agentName)}</td>
@@ -312,18 +320,25 @@ const Dashboard = {
         <td>${Util.escapeHtml(r.state)}</td>
       </tr>`).join("");
   },
+  ringColors: ["var(--cyan)", "var(--blue)", "var(--violet)"],
   renderCampaignPerf(perf){
     const active = campaigns.filter(c => c.status === "Active");
-    const html = active.map(c => {
+    const html = active.map((c, i) => {
       const count = perf[c.name] || 0;
       const pct = Math.min(100, Math.round((count / c.target) * 100));
+      const color = this.ringColors[i % this.ringColors.length];
       return `
-        <div class="perf-row">
-          <div class="perf-row-top"><span>${Util.escapeHtml(c.name)}</span><b>${count}/${c.target}</b></div>
-          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <div class="perf-ring-card">
+          <div class="perf-ring" style="--pct:${pct}; --ring-color:${color}">
+            <div class="perf-ring-inner">
+              <span class="perf-ring-value">${pct}%</span>
+              <span class="perf-ring-sub">${count}/${c.target}</span>
+            </div>
+          </div>
+          <span class="perf-ring-name">${Util.escapeHtml(c.name)}</span>
         </div>`;
     }).join("");
-    document.getElementById("campaignPerfList").innerHTML = html || `<p class="empty-row">No campaign activity today.</p>`;
+    document.getElementById("campaignPerfRings").innerHTML = html || `<p class="empty-row">No campaign activity today.</p>`;
   },
   renderTopAgentsMini(agents){
     if (!agents.length){ document.getElementById("topAgentsMini").innerHTML = `<p class="empty-row">No agent activity yet.</p>`; return; }
@@ -711,6 +726,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   Connection.check();
   Dashboard.refresh();
+  Dashboard.startAutoRefresh();
 
   document.getElementById("logoutBtn").addEventListener("click", () => {
     Toast.show("Logout is a placeholder — wire up your auth provider here.");
