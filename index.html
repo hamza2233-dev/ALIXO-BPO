@@ -135,6 +135,16 @@
           </div>
         </div>
 
+        <div class="panel perf-panel">
+          <div class="panel-head">
+            <h2>Today's Campaign Performance</h2>
+            <span class="live-dot"><span class="pulse"></span>Live</span>
+          </div>
+          <div id="campaignPerfRings" class="perf-rings">
+            <p class="empty-row">Loading…</p>
+          </div>
+        </div>
+
         <div class="grid-2col">
           <div class="panel">
             <div class="panel-head">
@@ -150,33 +160,24 @@
           </div>
 
           <div class="panel">
-            <div class="panel-head"><h2>Today's Campaign Performance</h2></div>
-            <div id="campaignPerfList" class="perf-list">
-              <p class="empty-row">Loading…</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid-2col">
-          <div class="panel">
             <div class="panel-head"><h2>Top Agents</h2></div>
             <div id="topAgentsMini" class="agent-list">
               <p class="empty-row">Loading…</p>
             </div>
           </div>
+        </div>
 
-          <div class="panel quick-panel">
-            <div class="panel-head"><h2>Quick Actions</h2></div>
-            <div class="quick-actions">
-              <button class="quick-btn" data-page="leadsubmission">
-                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                Submit a Lead
-              </button>
-              <button class="quick-btn" data-page="campaigns">
-                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l18-7-7 18-2.5-7.5L3 11z" fill="currentColor"/></svg>
-                View Active Campaigns
-              </button>
-            </div>
+        <div class="panel quick-panel">
+          <div class="panel-head"><h2>Quick Actions</h2></div>
+          <div class="quick-actions quick-actions-row">
+            <button class="quick-btn" data-page="leadsubmission">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Submit a Lead
+            </button>
+            <button class="quick-btn" data-page="campaigns">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 11l18-7-7 18-2.5-7.5L3 11z" fill="currentColor"/></svg>
+              View Active Campaigns
+            </button>
           </div>
         </div>
       </section>
