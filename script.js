@@ -18,7 +18,7 @@ const campaigns = [
     ageLimit: "50-85",
     dqNotes: "No VA, Tricare, Kizer, Retirement Plan",
     formLink: "",
-    target: 25,
+    target: 0,
     status: "Active"
   },
   {
@@ -44,7 +44,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form3.php",
-    target: 25,
+    target: 05,
     status: "Active"
   },
   {
@@ -57,7 +57,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://ringba-bid-asya.vercel.app/",
-    target: 25,
+    target: 05,
     status: "Active"
   },
   {
@@ -70,7 +70,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "https://syedfe120.vercel.app/",
-    target: 25,
+    target: 05,
     status: "Active"
   },
   {
@@ -83,7 +83,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "",
-    target: 25,
+    target: 02,
     status: "Active"
   },
   {
@@ -96,7 +96,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://www.leadlync.site/form/",
-    target: 25,
+    target: 02,
     status: "Active"
   },
   {
@@ -109,7 +109,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "",
-    target: 25,
+    target: 05,
     status: "Active"
   }
 ];
@@ -125,7 +125,7 @@ const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 /* Theme + auto-refresh are the only things still remembered per-browser. */
 const Config = {
   key: "alixo_dashboard_prefs",
-  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "light", refreshInterval: 20 },
+  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "dark", refreshInterval: 20 },
   load(){
     try{
       const raw = localStorage.getItem(this.key);
@@ -219,7 +219,7 @@ const Toast = {
 --------------------------------------------------------------------- */
 const Theme = {
   init(){
-    const saved = Config.load().theme || "light";
+    const saved = Config.load().theme || "dark";
     this.apply(saved);
     document.getElementById("themeToggle").addEventListener("click", () => {
       const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
