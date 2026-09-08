@@ -18,7 +18,7 @@ const campaigns = [
     ageLimit: "50-85",
     dqNotes: "No VA, Tricare, Kizer, Retirement Plan",
     formLink: "",
-    target: 0,
+    target: 25,
     status: "Active"
   },
   {
@@ -44,7 +44,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form3.php",
-    target: 05,
+    target: 25,
     status: "Active"
   },
   {
@@ -57,7 +57,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://ringba-bid-asya.vercel.app/",
-    target: 05,
+    target: 25,
     status: "Active"
   },
   {
@@ -70,7 +70,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "https://syedfe120.vercel.app/",
-    target: 05,
+    target: 25,
     status: "Active"
   },
   {
@@ -83,7 +83,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "",
-    target: 02,
+    target: 25,
     status: "Active"
   },
   {
@@ -96,7 +96,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://www.leadlync.site/form/",
-    target: 02,
+    target: 25,
     status: "Active"
   },
   {
@@ -109,7 +109,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "",
-    target: 05,
+    target: 25,
     status: "Active"
   }
 ];
