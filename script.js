@@ -31,7 +31,7 @@ const campaigns = [
     ageLimit: "65-85",
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form.php",
-    target: 30,
+    target: 35,
     status: "Active"
   },
   {
@@ -57,7 +57,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://ringba-bid-asya.vercel.app/",
-    target: 05,
+    target: 02,
     status: "Active"
   },
   {
