@@ -45,7 +45,7 @@ const campaigns = [
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form3.php",
     target: 05,
-    status: "Active"
+    status: "Paused"
   },
   {
     name: "FE 140 (WARM TRANSFER) (ELIJ)",
