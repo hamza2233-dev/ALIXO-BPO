@@ -119,7 +119,7 @@ const campaigns = [
    WEB_APP_URL: the /exec URL from your Apps Script deployment.
    SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz135kwbAdGQSyswt5tGC0pHUQEouuYNuCfMpAdc3_D54KKKVRv5uilYZYpoHBNzVZcRw/exec"; // <-- paste your Apps Script Web App URL here
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwYAj5Vk0_nMSn-PwLIq5ZEuHMJDqbXrGaqmVGror9CdfbOt_hPS9HkbaCkHScGGwQSyQ/exec"; // <-- paste your Apps Script Web App URL here
 const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
 /* Theme + auto-refresh are the only things still remembered per-browser. */
