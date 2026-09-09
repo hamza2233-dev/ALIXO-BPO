@@ -18,7 +18,7 @@ const campaigns = [
     ageLimit: "50-85",
     dqNotes: "No VA, Tricare, Kizer, Retirement Plan",
     formLink: "",
-    target: 01,
+    target: 25,
     status: "Active"
   },
   {
@@ -31,7 +31,7 @@ const campaigns = [
     ageLimit: "65-85",
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form.php",
-    target: 35,
+    target: 25,
     status: "Active"
   },
   {
@@ -44,8 +44,8 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "",
     formLink: "https://silverbpo.callhub.ai/form3.php",
-    target: 05,
-    status: "Paused"
+    target: 25,
+    status: "Active"
   },
   {
     name: "FE 140 (WARM TRANSFER) (ELIJ)",
@@ -57,7 +57,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://ringba-bid-asya.vercel.app/",
-    target: 02,
+    target: 25,
     status: "Active"
   },
   {
@@ -70,7 +70,7 @@ const campaigns = [
     ageLimit: "50-80",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "https://syedfe120.vercel.app/",
-    target: 05,
+    target: 25,
     status: "Active"
   },
   {
@@ -83,7 +83,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "",
-    target: 01,
+    target: 25,
     status: "Active"
   },
   {
@@ -96,7 +96,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "ORIGINAL NUMBER ONLY",
     formLink: "https://www.leadlync.site/form/",
-    target: 01,
+    target: 25,
     status: "Active"
   },
   {
@@ -109,7 +109,7 @@ const campaigns = [
     ageLimit: "50-79",
     dqNotes: "Original Number Only & Interested Customers",
     formLink: "",
-    target: 02,
+    target: 25,
     status: "Active"
   }
 ];
@@ -119,13 +119,13 @@ const campaigns = [
    WEB_APP_URL: the /exec URL from your Apps Script deployment.
    SHEET_ID:    must match the SHEET_ID constant at the top of Code.gs.
 --------------------------------------------------------------------- */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyx4zQCGxZM4V_H8EteUlIYqXYKQlbeH6pY7UrgKeDBZspoqKlfAsnP5KjgpL33bNneDA/exec"; // <-- paste your Apps Script Web App URL here
+const WEB_APP_URL = ""; // <-- paste your Apps Script Web App URL here
 const SHEET_ID = "1CbsdRlwnAYxZ4Ny7SQsjwOnVgshVlr-039ZfHAVA92I";
 
 /* Theme + auto-refresh are the only things still remembered per-browser. */
 const Config = {
   key: "alixo_dashboard_prefs",
-  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "dark", refreshInterval: 20 },
+  data: { webAppUrl: WEB_APP_URL, sheetId: SHEET_ID, theme: "light", refreshInterval: 20 },
   load(){
     try{
       const raw = localStorage.getItem(this.key);
@@ -197,6 +197,25 @@ const Util = {
   },
   monthLabelET(){
     return new Date().toLocaleDateString("en-US", { timeZone:"America/New_York", month:"long", year:"numeric" });
+  },
+  /* Auto-inserts slashes as the user types digits: 08052024 -> 08/05/2024 */
+  formatDobInput(raw){
+    const digits = raw.replace(/\D/g, "").slice(0, 8);
+    const mm = digits.slice(0, 2), dd = digits.slice(2, 4), yyyy = digits.slice(4, 8);
+    let out = mm;
+    if (digits.length > 2) out += "/" + dd;
+    if (digits.length > 4) out += "/" + yyyy;
+    return out;
+  },
+  /* Validates MM/DD/YYYY, including real calendar days (no Feb 30, etc). */
+  isValidDob(value){
+    const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((value || "").trim());
+    if (!m) return false;
+    const month = Number(m[1]), day = Number(m[2]), year = Number(m[3]);
+    if (month < 1 || month > 12) return false;
+    if (year < 1900 || year > new Date().getFullYear()) return false;
+    const d = new Date(year, month - 1, day);
+    return d.getFullYear() === year && d.getMonth() === month - 1 && d.getDate() === day;
   }
 };
 
@@ -219,7 +238,7 @@ const Toast = {
 --------------------------------------------------------------------- */
 const Theme = {
   init(){
-    const saved = Config.load().theme || "dark";
+    const saved = Config.load().theme || "light";
     this.apply(saved);
     document.getElementById("themeToggle").addEventListener("click", () => {
       const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
@@ -366,6 +385,11 @@ const LeadSubmission = {
       select.appendChild(opt);
     });
 
+    const dobInput = document.getElementById("dobInput");
+    dobInput.addEventListener("input", (e) => {
+      e.target.value = Util.formatDobInput(e.target.value);
+    });
+
     document.getElementById("leadForm").addEventListener("submit", (e) => this.submit(e));
   },
   async submit(e){
@@ -374,6 +398,14 @@ const LeadSubmission = {
     const msg = document.getElementById("formMsg");
 
     if (!form.checkValidity()){ form.reportValidity(); return; }
+
+    const dobValue = document.getElementById("dobInput").value.trim();
+    if (!Util.isValidDob(dobValue)){
+      msg.textContent = "Enter a valid date of birth as MM/DD/YYYY."; msg.className = "form-msg error";
+      document.getElementById("dobInput").focus();
+      return;
+    }
+
     if (!Config.data.webAppUrl){
       msg.textContent = "Set WEB_APP_URL at the top of script.js first."; msg.className = "form-msg error";
       return;
@@ -384,6 +416,7 @@ const LeadSubmission = {
       agentName: fd.get("agentName")?.trim(),
       firstName: fd.get("firstName")?.trim(),
       lastName: fd.get("lastName")?.trim(),
+      dob: dobValue,
       phone: Util.normalizePhone(fd.get("phone")),
       showNumber: Util.normalizePhone(fd.get("showNumber")),
       street: fd.get("street")?.trim(),
@@ -406,7 +439,7 @@ const LeadSubmission = {
       Toast.show(`Lead submitted successfully — ${stamp} ET.`, "success");
       form.reset();
       Dashboard.refresh();
-      if (document.getElementById("page-progress").classList.contains("active")) Progress.refreshLiveFeed();
+      if (document.getElementById("page-progress").classList.contains("active")) Progress.refreshAgentLeads();
     }catch(err){
       msg.textContent = "Error: " + err.message; msg.className = "form-msg error";
       Toast.show("Submission failed: " + err.message, "error");
@@ -538,8 +571,12 @@ const Progress = {
   currentRange: "today",
   customStart: null,
   customEnd: null,
-  liveFeedTimer: null,
+  autoTimer: null,
   agentsLoaded: false,
+  rangeLabels: {
+    today: "Today", yesterday: "Yesterday", week: "This Week",
+    month: "This Month", lastmonth: "Last Month", custom: "Custom Range"
+  },
 
   init(){
     if (this._bound) { this.refreshAll(); this.restartAutoRefresh(); return; }
@@ -551,6 +588,7 @@ const Progress = {
       btn.classList.add("active");
       this.currentRange = btn.dataset.range;
       document.getElementById("customRangeRow").hidden = this.currentRange !== "custom";
+      this.updateRangeLabel();
       if (this.currentRange !== "custom") this.refreshAll();
     });
     document.getElementById("applyRangeBtn").addEventListener("click", () => {
@@ -559,16 +597,25 @@ const Progress = {
       if (!this.customStart || !this.customEnd){ Toast.show("Pick both a start and end date.", "error"); return; }
       this.refreshAll();
     });
-    document.getElementById("agentFilter").addEventListener("change", () => this.refreshAll());
+    document.getElementById("agentFilter").addEventListener("change", () => this.refreshStats());
     document.getElementById("refreshProgressBtn").addEventListener("click", () => this.refreshAll());
 
+    this.updateRangeLabel();
     this.refreshAll();
     this.restartAutoRefresh();
   },
+  updateRangeLabel(){
+    document.getElementById("agentLeadsRangeLabel").textContent = this.rangeLabels[this.currentRange] || "Today";
+  },
   restartAutoRefresh(){
-    clearInterval(this.liveFeedTimer);
+    clearInterval(this.autoTimer);
     const secs = Number(Config.data.refreshInterval) || 20;
-    this.liveFeedTimer = setInterval(() => this.refreshLiveFeed(), secs * 1000);
+    this.autoTimer = setInterval(() => {
+      if (document.getElementById("page-progress").classList.contains("active")){
+        this.refreshAgentLeads();
+        this.refreshTodayLeads();
+      }
+    }, secs * 1000);
   },
   async refreshAll(){
     if (!Config.data.webAppUrl){
@@ -577,7 +624,7 @@ const Progress = {
     }
     await Promise.all([
       this.refreshStats(),
-      this.refreshLiveFeed(),
+      this.refreshAgentLeads(),
       this.refreshTodayLeads(),
       this.refreshTopAgents(),
       this.loadAgentList()
@@ -597,18 +644,19 @@ const Progress = {
       Connection.setOk();
     }catch(err){ Connection.setBad(); Toast.show("Progress load failed: " + err.message, "error"); }
   },
-  async refreshLiveFeed(){
+  async refreshAgentLeads(){
     if (!Config.data.webAppUrl) return;
     try{
-      const data = await Api.get("getLiveFeed", { limit: 40 });
-      const tbody = document.querySelector("#liveFeedTable tbody");
-      const rows = data.leads || [];
+      const params = { range: this.currentRange };
+      if (this.currentRange === "custom"){ params.start = this.customStart; params.end = this.customEnd; }
+      const data = await Api.get("getAgentLeads", params);
+      const tbody = document.querySelector("#agentLeadsTable tbody");
+      const rows = (data.agents || []).slice().sort((a, b) => b.count - a.count);
       tbody.innerHTML = rows.length ? rows.map(r => `
         <tr>
-          <td>${Util.fmtTime(r.timestamp)}</td><td>${Util.escapeHtml(r.agentName)}</td>
-          <td>${Util.escapeHtml(r.firstName)} ${Util.escapeHtml(r.lastName)}</td>
-          <td>${Util.escapeHtml(r.campaign)}</td>
-        </tr>`).join("") : `<tr><td colspan="4" class="empty-row">No leads yet.</td></tr>`;
+          <td>${Util.escapeHtml(r.agentName)}</td>
+          <td>${r.count}</td>
+        </tr>`).join("") : `<tr><td colspan="2" class="empty-row">No leads for this range.</td></tr>`;
     }catch(err){ /* silent on background refresh */ }
   },
   async refreshTodayLeads(){
