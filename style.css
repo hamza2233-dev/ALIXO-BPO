@@ -263,29 +263,21 @@ h1,h2,h3{ font-family:var(--font-display); margin:0; letter-spacing:.01em; }
   pointer-events:none;
 }
 [data-theme="light"] .perf-panel{
-  background:linear-gradient(150deg, #7c3aed 0%, #a341d6 50%, #ec4899 100%);
-  border-color:transparent;
-  box-shadow:var(--shadow-hero);
-  --surface: rgba(255,255,255,.14);
-  --surface-2: rgba(255,255,255,.22);
-  --border: rgba(255,255,255,.28);
-  --text: #ffffff;
-  --text-dim: rgba(255,255,255,.85);
-  --text-faint: rgba(255,255,255,.68);
+  background:linear-gradient(135deg, #faf7ff 0%, #fdf3fb 100%);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-card);
 }
-[data-theme="light"] .perf-panel::before{
-  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
-  background-image:radial-gradient(circle, rgba(255,255,255,.35) 1px, transparent 1.5px);
-  background-size:26px 26px;
-}
+[data-theme="light"] .perf-panel::before{ content:none; }
 [data-theme="light"] .perf-panel::after{
-  width:60%; height:180%; top:-40%;
-  background:radial-gradient(ellipse at center, rgba(255,255,255,.35), transparent 70%);
+  width:55%; height:160%; top:-45%;
+  background:radial-gradient(ellipse at center, var(--pink-soft), transparent 70%);
 }
-[data-theme="light"] .perf-panel .panel-head, [data-theme="light"] .perf-panel .perf-rings{ position:relative; z-index:1; }
-[data-theme="light"] .perf-panel .ghost-btn{ background:rgba(255,255,255,.18); border-color:rgba(255,255,255,.32); color:#fff; }
-[data-theme="light"] .perf-panel .ghost-btn:hover{ border-color:#fff; }
-[data-theme="light"] .perf-ring::before{ background:rgba(255,255,255,.16); backdrop-filter:blur(2px); }
+[data-theme="light"] .perf-panel .panel-head{ position:relative; }
+[data-theme="light"] .perf-panel .panel-head::after{
+  content:""; position:absolute; top:-18px; left:-18px; right:-18px; height:3px;
+  background:linear-gradient(90deg, var(--blue), var(--violet), var(--pink));
+  border-radius:var(--radius) var(--radius) 0 0;
+}
 .perf-rings{
   position:relative; display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
   gap:22px 16px; padding-top:6px;
