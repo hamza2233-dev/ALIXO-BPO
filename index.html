@@ -201,6 +201,10 @@
                 <span>Customer Last Name *</span>
                 <input type="text" name="lastName" required autocomplete="off" />
               </label>
+              <label class="field">
+                <span>Date of Birth *</span>
+                <input type="text" name="dob" id="dobInput" required autocomplete="off" placeholder="MM/DD/YYYY" inputmode="numeric" maxlength="10" />
+              </label>
 
               <label class="field">
                 <span>Customer Phone Number *</span>
@@ -285,7 +289,7 @@
       <section class="page" id="page-campaigns">
         <div class="panel-head standalone">
           <h2>Active Campaigns</h2>
-          <span class="panel-sub">CAMPAIGNS</span>
+          <span class="panel-sub">8 static campaigns · configured in code</span>
         </div>
         <div class="campaign-grid" id="campaignGrid"></div>
       </section>
@@ -329,13 +333,13 @@
 
         <div class="panel">
           <div class="panel-head">
-            <h2>Live Feed</h2>
-            <span class="live-dot"><span class="pulse"></span>Auto-refreshing</span>
+            <h2>Leads by Agent</h2>
+            <span class="panel-sub" id="agentLeadsRangeLabel">Today</span>
           </div>
           <div class="table-wrap tall">
-            <table class="data-table" id="liveFeedTable">
-              <thead><tr><th>Time</th><th>Agent</th><th>Customer</th><th>Campaign</th></tr></thead>
-              <tbody><tr><td colspan="4" class="empty-row">Loading…</td></tr></tbody>
+            <table class="data-table" id="agentLeadsTable">
+              <thead><tr><th>Agent</th><th>Leads</th></tr></thead>
+              <tbody><tr><td colspan="2" class="empty-row">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
