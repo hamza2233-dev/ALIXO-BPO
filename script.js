@@ -541,7 +541,7 @@ const Campaigns = {
             <svg viewBox="0 0 24 24" width="16" height="16"><path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z" fill="currentColor"/></svg>
           </button>` : ""}
         </div>
-        <div class="campaign-meta">
+        <div class="campaign-states">
           <span>${Util.escapeHtml(c.states)}</span>
         </div>
         ${c.dqNotes ? `<div class="dq-note">DQ: ${Util.escapeHtml(c.dqNotes)}</div>` : ""}
