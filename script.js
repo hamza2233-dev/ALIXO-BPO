@@ -61,16 +61,15 @@ const campaigns = [
     status: "Active"
   },
   {
-    name: "90 FE SYED (BLIND TRANSFER) (KD)",
+    name: "180 FE SYED (WARM TRANSFER) (ATTA)",
     type: "Static",
-    did: "8447043251",
-    states: "ALL STATES EXCEPT NYC",
-    timing: "07:00 PM - 04:00 AM",
+    did: "8333840955",
+    states: "TX OH PA NC SC GA TN IN MO FL",
+    timing: "07:00 PM - 05:00 AM",
     breakTime: "NO BREAK",
     ageLimit: "50-80",
     dqNotes: "Original Number Only & Interested Customers",
-    formLink: "https://syedfe120.vercel.app/",
-    target: 05,
+    target: 10,
     status: "Active"
   },
   {
